@@ -1,0 +1,3 @@
+% \subsection{Soliton Mergers}
+
+% Want to show radial profile looking like NFW at the outer edges. See http://zulassung.hlrn.de/kurzbeschreibungen/nip00040.pdf
