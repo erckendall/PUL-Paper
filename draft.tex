@@ -69,9 +69,9 @@ While these modified cosmological simulation codes have produced promising resul
 This paper is organised as follows. We first provide a short review of the physics of ULDM, including a derivation of the SP equations from an appropriate scalar-field Lagrangian. We then describe the details of the implementation of \PyUltraLight, before moving on to a testing and verification section, in which we reproduce a selection of results from a variety of recent ULDM simulations and discuss energy conservation within the code. 
 
 
-\section{The Physics of ULDM: The Schr{\"o}dinger-Poisson System}\label{sec:physics}
+\section{The Physics of ULDM}\label{sec:physics}
 
-
+\subsection{The Schr{\"o}dinger-Poisson System}
 
 The existence of an extremely light scalar field, minimally coupled to gravity, is the central premise on which ULDM models are predicated. Within the ULDM framework, it is proposed that large-scale cosmological structure formation proceeds through the Bose-Einstein condensation of this scalar field. In this section we derive the (non-relativistic) dynamical equations of the single macroscopic condensate wavefunction, namely, the Schr{\"o}dinger-Poisson equations. We begin by considering the following action functional for a scalar field, $\phi$, minimally coupled to gravity and in the absence of self-interactions:
 \begin{equation}\label{eq:action}
@@ -105,9 +105,6 @@ Thus, by making suitable approximations we have derived the Schr{\"o}dinger equa
 \end{equation}
 where $G$ is Newton's gravitational constant. The coupled equations \ref{eq:schrodinger} and \ref{eq:poisson} together form the nonlinear Schr{\"o}dinger-Poisson (SP) system which describes the dynamics of ULDM in the non-relativistic regime. It is this system of equations which \PyUltraLight is designed to solve.
 
-\section{Algorithm and Implementation}\label{sec:implementation}
-
-Summary of this section TBW
 
 \subsection{Field Rescalings}
 
@@ -139,6 +136,12 @@ Likewise, the mass density at any point is given by
 \end{equation}
 All computations performed by \PyUltraLight\ are carried out using the dimensionless quantities defined in \ref{eq:dimensionless}, while provisions are made within the code for initial conditions and outputs to be converted to and from the desired unit system specified by the user. Henceforth, we will often refer to the quantity $\vert\psi\vert^2$ simply as the density, where it is understood that this is in fact a dimensionless quantity related to the physical mass density through a constant of proportionality given by equation \ref{eq:density}.
 
+
+
+
+\section{Algorithm and Implementation}\label{sec:implementation}
+
+In this section we discuss the methodology used to calculate the dynamics of the adimensional SP system (equations \ref{eq:s-adim} and \ref{eq:p-adim}) given user-specified initial conditions. We introduce the symmetrised split-step Fourier method, and describe schematically how the system is evolved at each timestep. 
 
 \subsection{Dynamical Evolution}\label{sec:dynamics}
 
@@ -238,7 +241,9 @@ From here we can define a `maximum velocity' for the simulation grid. This is th
 This proves to be a highly restrictive constraint on the timestep, and can be relaxed significantly at the user's discretion for simulations in which the expected velocities within the system will not approach this maximum grid velocity. Convergence testing on a case-by-case basis is encouraged to determine the timestep constraint necessary for a given degree of accuracy. 
 
 
-\section{Testing and Verification}\label{sec:test}
+\section{Verification of ULDM Dynamics}\label{sec:test}
+
+In this section we test the validity of \PyUltraLight as a numerical SP solver by reproducing a number of results from previous studies of ULDM dynamics. We are able to reproduce phenomena arising due to the wavelike nature of ULDM, namely interference effects and effective repulsive forces. Additionally, we study the evolution of the velocity field within a solitonic core orbiting within a Newtonian central potential, showing that in the absence of complete tidal disruption, the stable orbital configuration is one of an irrotational Riemann-S ellipsoid. Finally, we demonstrate sub-percent level energy conservation for a selection of dynamical scenarios.
 
 \subsection{Interference Patterns During Soliton Collisions}\label{sec:interference}
 
