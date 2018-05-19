@@ -20,23 +20,22 @@
 %% \affiliation{Institution,\\Address, Country}
 
 % more complex case: 4 authors, 3 institutions, 2 footnotes
-\author[a,b,1]{F. Irst,\note{Corresponding author.}}
-\author[c]{S. Econd,}
-\author[a,2]{T. Hird\note{Also at Some University.}}
-\author[a,2]{and Fourth}
+\author[]{Faber Edwards,}
+\author[]{Emily Kendall,}
+\author[]{Shaun Hotchkiss,}
+\author[]{and Richard Easther}
 
 % The "\note" macro will give a warning: "Ignoring empty anchor..."
 % you can safely ignore it.
 
-\affiliation[a]{One University,\\some-street, Country}
-\affiliation[b]{Another University,\\different-address, Country}
-\affiliation[c]{A School for Advanced Studies,\\some-location, Country}
+\affiliation[]{Department of Physics, University of Auckland, Private Bag 92019, Auckland, New Zealand}
+
 
 % e-mail addresses: one for each author, in the same order as the authors
-\emailAdd{first@one.univ}
-\emailAdd{second@asas.edu}
-\emailAdd{third@one.univ}
-\emailAdd{fourth@one.univ}
+\emailAdd{faberedwards@gmail.com}
+\emailAdd{eken000@aucklanduni.ac.nz}
+\emailAdd{s.hotchkiss@auckland.ac.nz}
+\emailAdd{r.easther@auckland.ac.nz}
 
 
 \newcommand{\apj}{Astrophysical J.}
@@ -284,7 +283,9 @@ As demonstrated in \cite{Paredes2016}, the wavelike properties of ULDM can give 
 
 \PyUltraLight is designed such that a central potential may be included by way of a point-mass located at the centre of the simulation grid. While this setup is somewhat unphysical, it provides a starting point for a study of the stability of satellite dark matter halos orbiting a much larger object. Studies of this type can be used to make predictions regarding the lifespans of satellite galaxies around the Milky Way, offering a potential resolution of the so-called missing satellites problem \cite{Weinberg2015}.
 
-An extensive study of the tidal disruption of ULDM solitonic cores orbiting a central potential has recently been undertaken in \cite{Du2018}. Here we reproduce just one of their results as a validity check for \PyUltraLight. In particular, it is found in \cite{Du2018} that an initially spherical solitonic core without self-rotation will gradually spin up to form a tidally-locked irrotational Riemann -S ellipsoid when orbiting a host mass. Figure \ref{fig:riemann} shows the internal velocity field of a solitonic satellite after one complete revolution around a host mass, obtained using \PyUltraLight on a $256^3$ simulation grid. In this case the ratio of host to satellite mass was $\approx 55$. It can be seen that the soliton has become elongated along the radial line connecting to the host, indicating that it is tidally locked. Meanwhile the internal velocity field can be seen to be that of an irrotational Riemann-S ellipsoid \cite{Daller2012}.
+An extensive study of the tidal disruption of ULDM solitonic cores orbiting a central potential has recently been undertaken in \cite{Du2018}. Here, we reproduce just one of their results as an additional validity check for \PyUltraLight. In particular, we reproduce the characteristic internal velocity field of a tidally-locked soliton orbiting a central potential. 
+
+When the SP system is recast as a system of hydrodynamical equations, the fluid velocity is given by the gradient of the smoothly-varying phase at any point. This implies that the velocity flow of the SP system is irrotational, $\Nabla\times\vec{v}=0$. When a soliton is initialised in a circular orbit around a Newtonian potential, the initially spherical profile is distorted, elongated along the radial direction of the central potential. Meanwhile, the velocity field corresponding to the overall orbital motion of the soliton is superposed with the internal velocity field, combining so as to produce a net flow with vanishing curl. The family of Riemann-S ellipsoids describe uniformly rotating bodies which satisfy the condition of irrotationality \cite{Chandrasekhar1965}, and it is therefore the characteristic internal velocity field of such an ellipsoid which we expect to arise during the simulation. It is found in \cite{Du2018} that an initially spherical solitonic core without self-rotation will gradually spin up to form a tidally-locked irrotational Riemann-S ellipsoid when orbiting a host mass. We are able to reproduce this result using \PyUltraLight, with Figure \ref{fig:riemann} showing the internal velocity field of a solitonic satellite after one complete revolution around a host mass, obtained using \PyUltraLight on a $256^3$ simulation grid. In this case the ratio of host to satellite mass was $\approx 55$. It can be seen that the soliton has become elongated along the radial line connecting to the host, indicating that it is tidally locked. Meanwhile the internal velocity field can be seen to be that of an irrotational Riemann-S ellipsoid \cite{Daller2012}.
 \begin{figure}
   \includegraphics[width=1.\textwidth,trim=1cm 1cm 0 1cm,clip]{riemann}
   \caption{Solitonic core after one revolution of a central potential, demonstrating the internal velocity field of an irrotational Riemann-S ellipsoid (where the collective motion of the soliton has been subtracted from the velocity field). Deformation of the spherical density profile into that of an ellipsoid can be seen, with extension along the radial direction (red arrow).}
