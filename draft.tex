@@ -319,10 +319,7 @@ where in the last step we have used Stokes' Theorem as well as the Poisson equat
 
 The two terms in the integral \ref{eq:energy-tot} are calculated separately within the code. It is easy to see that the first term represents the gravitational potential energy of the SP system. As discussed in \cite{Hui2016}, the second term may be decomposed further into two contributions which may be considered separately as kinetic and `quantum' energies, but for the purposes of this implementation it is sufficient to consider only their combined contribution. Because \PyUltraLight provides the option to include the central potential of a point mass located at the centre of the simulation grid, we have additional energy contributions when such a potential is included. Because this central potential does not arise from a ULDM object, we calculate the gravitational potential energy due to self-interaction separately from the gravitational potential energy due to the central potential.
 
-Figures \ref{fig:combined_1} and \ref{fig:binary} demonstrate energy conservation for two possible simulation scenarios. In the first case, we examine the evolution of the energy for a single soliton undergoing significant tidal disruption whilst orbiting within a central potential. We see that as the soliton is disrupted, the kinetic energy increases, while the gravitational energy due to the central potential decreases, as expected. Meanwhile, the gravitational potential energy due to self-interaction gradually increases toward zero as the disruption continues. The sum of the individual energy components is conserved to $10^{-2}\ \%$ in this case, where the simulation was run at $256^3$. Higher grid resolutions result in even better energy conservation. Figure \ref{fig:binary} demonstrates the evolution of the energy of a binary system of solitons in elliptical orbits around their common centre of mass. In this case the simulation ran for approximately three orbital periods at $256^3$. At points of closest approach, it can be clearly seen that the kinetic energy increases as the solitons speed up, while the potential energy due to self-interaction decreases commensurately. In this scenario no central potential has been included, so the gravitational energy due to the central potential stays uniformly zero throughout the simulation. The small scale oscillations that can be observed are artifacts of the relatively low spatial resolution, and smooth out as grid resolution is increased. In this case the total energy is conserved to $10^{-3}\ \%$.
-
-
-
+Figures \ref{fig:combined_1} and \ref{fig:binary} demonstrate energy conservation for two example simulation scenarios. In the first case, we examine the evolution of the energy for a single soliton undergoing significant tidal disruption within a Newtonian central potential. We see that as the soliton is disrupted, the kinetic energy increases, while the gravitational energy due to the central potential decreases, as expected. Meanwhile, the gravitational potential energy due to self-interaction gradually increases toward zero as the disruption continues. The sum of the individual energy components is conserved to $10^{-2}\ \%$ in this case, where the simulation was run at $256^3$. Higher grid resolutions result in even better energy conservation. Figure \ref{fig:binary} demonstrates the evolution of the energy of a binary system of solitons in elliptical orbits around their common centre of mass. In this case the simulation ran for approximately three orbital periods at $256^3$. At points of closest approach, it can be clearly seen that the kinetic energy increases as the solitons speed up, while the potential energy due to self-interaction decreases commensurately. In this scenario no central potential has been included, so the gravitational energy due to the central potential stays uniformly zero throughout the simulation and is not plotted in the Figure. It can also be seen that as the solitons reach the first point of closest approach, they become slightly deformed, exciting oscillatory modes which are manifest in the Figure as small scale oscillations superposed on the global behaviour. In this case the total energy is conserved to $10^{-3}\ \%$.
 
 
 % \begin{figure}[tbp]
@@ -357,7 +354,7 @@ Figures \ref{fig:combined_1} and \ref{fig:binary} demonstrate energy conservatio
 \end{figure}
 
 \begin{figure}
-  \includegraphics[width=0.9\textwidth,trim=0 0 2cm 2cm,clip]{energy_diagram2}
+  \includegraphics[width=0.9\textwidth,trim=0 0 2cm 2cm,clip]{egy_m=22.eps}
   \caption{Evolution of the energy for a binary soliton system with each soliton in an elliptical orbit around the common centre of mass.}
   \label{fig:binary}
 \end{figure}
@@ -380,24 +377,14 @@ While the current implementation of \PyUltraLight is already a useful tool for s
 
 
 
-
-
-
-
-
-
 \appendix
 \section{Download and Licensing}
 
-To be written.
-
-
-
+\PyUltraLight has been made publicly available under a BSD licence. The full code repository, including supplementary files such as the code used to generate soliton profiles, is available on GitHub at https://github.com/erckendall/PyUltraLight. \PyUltraLight makes use of the pyFFTW pythonic wrapper around the FFTW C-based fast Fourier transform libraries. Both pyFFTW and FFTW are freely-available. \PyUltraLight has been successfully tested on both Mac OS and Linux operating systems, though not exhaustively. The current version of \PyUltraLight, as demonstrated in this work, is capable of reproducing many of the results of previous ULDM simulations, and we plan to extend its capabilities in future releases.  
 
 \acknowledgments
 
-To be written.
-
+TBW
 
 
 
