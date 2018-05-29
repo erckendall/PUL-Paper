@@ -109,7 +109,7 @@ We have thus show that $\psi$ satisfies the Schr{\"o}dinger equation in this lim
 \begin{equation}\label{eq:poisson}
     \nabla^2\Phi=4\pi G m \vert\psi\vert^2,
 \end{equation}
-where $G$ is Newton's gravitational constant. The coupled equations \ref{eq:schrodinger} and \ref{eq:poisson} together form the nonlinear Schr{\"o}dinger-Poisson (SP) system which describes the dynamics of ULDM in the non-relativistic regime. It is this system of equations which \PyUltraLight is designed to solve.
+where $G$ is Newton's gravitational constant. The coupled equations \ref{eq:schrodinger} and \ref{eq:poisson} together form the nonlinear Schr{\"o}dinger-Poisson system which describes the dynamics of ULDM in the non-relativistic regime. It is this system of equations which \PyUltraLight is designed to solve. \re{I try to avoid acronyms like SP; ULDM works since it replaces something very long, and CDM is common usage, but I think papers are more readable if they are used sparingly}
 
 
 \subsection{Field Rescalings}
@@ -165,40 +165,44 @@ We can therefore write the approximate form of equation \ref{eq:exact-time-ev} a
 \end{equation}
 Note that the exponential in equation \ref{eq:approx-time-ev} omits the time-ordering symbol, and is only equivalent to its time-ordered counterpart to order $h^2$. \re{to here}
 
-Given that the linear differential operator in equation \ref{eq:approx-time-ev} acts naturally in Fourier space, while the nonlinear potential term is simplest to evaluate in position space, we are motivated to split the exponential so as to separate these terms. This will then allow us to employ a pseudospectral algorithm to compute the time evolution. Such a splitting of the exponential is valid when the timestep $h$ is small, as the dispersive and nonlinear terms can be assumed to act independently. In this implementation, we split the exponential as follows:
+The linear differential operator in equation \ref{eq:approx-time-ev} acts naturally in Fourier space, while the nonlinear potential term is simplest to evaluate in position space and by splitting the exponential we can evaluate each term in its natural domain.  For small timesteps we assume that the dispersive and nonlinear terms act independently,  adopting the specific evolution scheme  
+%
 \begin{equation}\label{eq:split-step}
     \psi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)\approx\operatorname{exp}\left[-\frac{ih}{2}\Phi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)\right]\operatorname{exp}\left[\frac{ih}{2}\nabla^2\right]\operatorname{exp}\left[-\frac{ih}{2}\Phi(\vec{x},t)\right]\psi(\vec{x},t).
 \end{equation}
-This splitting can be understood thusly: first, a half timestep is taken in which only the nonlinear potential operator acts, followed by a full timestep in the linear term. The potential field is then updated, and a final half timestep in the nonlinear term is performed. We may use the Baker-Campbell-Hausdorff formula to express the product of exponentials in equation \ref{eq:split-step} as a single exponential. Keeping only terms to order $h^2$ we find:
+%
+This splitting can be understood thusly: first, a half timestep is taken in which only the nonlinear potential operator acts, followed by a full timestep in the linear term. The potential field is then updated, and a final half timestep in the nonlinear term is performed. Using the Baker-Campbell-Hausdorff formula to express the product of exponentials in equation \ref{eq:split-step} as a single exponential and keeping only terms to order $h^2$ we find:
 \begin{equation}\label{eq:BCH}
     \operatorname{exp}\left[i\frac{h}{2}\Big(\nabla^2-\Phi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)-\Phi(\vec{x},t)\Big)+\frac{h^2}{8}\Big[\nabla^2,\Phi(\vec{x},t)\Big]-\frac{h^2}{8}\Big[\nabla^2,\Phi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)\Big]\right].
 \end{equation}
-Making use of the fact that $\Phi(\vec{x},t+h)\approx\Phi(\vec{x},t)+h\Dot{\Phi}(\vec{x},t)$, we see that the commutators in equation \ref{eq:BCH} cancel at $\mathcal{O}(h^2)$, such that this expression is equivalent to \ref{eq:approx-time-ev}, with the dominant error term appearing at $\mathcal{O}(h^3)$. 
+Making use of the fact that $\Phi(\vec{x},t+h)\approx\Phi(\vec{x},t)+h\Dot{\Phi}(\vec{x},t)$ we see that the commutators in equation \ref{eq:BCH} cancel at $\mathcal{O}(h^2)$ and the expression matches \ref{eq:approx-time-ev}, with the dominant error term appearing at $\mathcal{O}(h^3)$. 
 
-Evaluation of equation \ref{eq:split-step} within \PyUltraLight proceeds as follows:
-Initially, the nonlinear term acts in position space for one half-timestep. The result is then Fourier transformed, and a full timestep is taken in which the differential operator is applied in the Fourier domain. The potential field is then updated in accordance with equation \ref{eq:p-adim}. An inverse Fourier transform is then performed, and a final half timestep is taken in which the updated nonlinear term acts in position space to give the new $\psi$ field configuration. This procedure is known as the symmetrised split-step Fourier method, and is used widely in fields such as nonlinear fiber optics \cite{Agrawal2013}. It can be represented schematically as follows:
+Evaluation of equation \ref{eq:split-step} within \PyUltraLight thus proceeds as follows:
+Initially, the nonlinear term acts in position space for one half-timestep. The result is  Fourier transformed, and a full timestep is taken with the differential operator  applied in the Fourier domain. The potential field is then updated in accordance with equation \ref{eq:p-adim}. After an inverse Fourier transform a final half timestep is taken with the updated nonlinear term acting in position space to give the new $\psi$ field configuration. This procedure is known as the symmetrised split-step Fourier method, and  used widely in fields such as nonlinear fiber optics \cite{Agrawal2013}. \re{do want a couple of other examples/cites?} 
+
+The algorithm can be represented schematically as
 \begin{equation}\label{eq:schematic-psi}
     \psi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)=\operatorname{exp}\left[-\frac{ih}{2}\Phi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)\right]\CMcal{F}^{-1} \operatorname{exp}\left[\frac{-ih}{2}k^2\right]\CMcal{F}\operatorname{exp}\left[-\frac{ih}{2}\Phi(\vec{x},t)\right]\psi(\vec{x},t),
 \end{equation}
-where the order of operations is read from right to left, $\CMcal{F}$ and $\CMcal{F}^{-1}$ represent the discrete Fourier transform and its inverse, and $k$ is the wavenumber in the Fourier domain. The potential field is updated following the inverse Fourier transform in equation \ref{eq:schematic-psi}, and this update procedure may be represented schematically as
+where the order of operations runs from right to left, $\CMcal{F}$ and $\CMcal{F}^{-1}$ denote the discrete Fourier transform and its inverse, and $k$ is the wavenumber in the Fourier domain. The potential field is updated following the inverse Fourier transform in equation \ref{eq:schematic-psi}, via
+%
 \begin{equation}\label{eq:schematic-phi}
     \Phi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)=\CMcal{F}^{-1}\left(-\frac{1}{k^2}\right)\CMcal{F}\ 4\pi\vert\psi(\vec{x},t_{i})\vert^2,
 \end{equation}
-where $\psi(\vec{x},t_{i})$ represents the field configuration at this intermediary point in the timestep. The final operation in equation \ref{eq:schematic-psi} changes only the phase of the $\psi$ field, and thus we could replace $\psi(\vec{x},t_{i})$ with $\psi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)$ in equation \ref{eq:schematic-phi} with no change in meaning. 
-
-In the \PyUltraLight implementation, we make use of an additional simplification of the symmetrised split-step Fourier method. Namely, consecutive half-steps in the nonlinear term may be combined into a single full step in each case such that when iterated, only the first and last operations involve half steps. This can be represented schematically as 
+%
+where $\psi(\vec{x},t_{i})$ is the field configuration at this halfway point in the full timestep. The final operation in equation \ref{eq:schematic-psi}  only changes the phase of  $\psi$, so we could replace $\psi(\vec{x},t_{i})$ with $\psi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)$ in equation \ref{eq:schematic-phi} with no change in meaning. \PyUltraLight makes an additional simplification ti the symmetrised split-step Fourier method as the consecutive half-steps in the nonlinear term may be combined into a single full step. Consequently, only the first and last operations involve actual half steps. Schematically this becomes 
+%
 \begin{equation}
     \psi(t\hspace*{-.2em}+\hspace*{-.2em}nh)=\operatorname{exp}\left[+\frac{ih}{2}\Phi\right]\left(\prod^n\operatorname{exp}\left[-\frac{ih}{2}\Phi\right]\operatorname{exp}\left[\frac{ih}{2}\nabla^2\right]\right)\operatorname{exp}\left[-\frac{ih}{2}\Phi\right]\psi(t),
 \end{equation}
-where the $\Phi$ field is updated at each step in accordance with equation \ref{eq:schematic-phi} and attention is drawn to the sign difference between the first and last operators.
+%
+where  $\Phi$  is updated at each step via equation \ref{eq:schematic-phi}; attention is drawn to the sign difference between the first and last operators.
 
-The discrete Fourier transform (DFT) and its inverse are handled within \PyUltraLight using pyFFTW. pyFFTW is a pythonic wrapper around the C-based FFTW subroutine library, and allows for efficient evaluation of both real and complex DFTs \cite{pyfftw} \cite{fftw} \cite{Frigo2005}.  Multithreading is supported by pyFFTW, and is implemented within \PyUltraLight by using the multiprocessing package to determine the number of online CPUs and feed this directly to the threads argument of the pyfftw.FFTW class. 
-
-In addition to the use of pyFFTW, performance within \PyUltraLight is further improved through the use of the NumExpr package, which provides routines for the efficient manipulation of array objects within the simulation using a vector-based virtual machine \cite{numexpr}. 
+From a computational perspective, the numerical Fourier transforms are likely to be rate-limiting step in any pseudospectral code. In \PyUltraLight the discrete Fourier transform (DFT) and its inverse are implemented via pyFFTW, a pythonic wrapper for the C-based FFTW subroutine library which efficiently implements both real and complex DFTs \cite{pyfftw,fftw,Frigo2005}. This  allows  \PyUltraLight  to combine the flexibility of a notebook based modelling tool with the efficiency of a carefully tuned, compiled numerical library.  FFTW is fully parallelised and its support for multithreading  is inherited  by pyFFTW and accessed within \PyUltraLight; the number of threads used by the pyfftw.FFTW class is determined by the  Python multiprocessing routines which are used to ascertain the number of available CPU cores. In addition, \PyUltraLight uses the NumExpr package to parallelise operations on array objects within the simulation \cite{numexpr}. 
 
 \subsection{Initial Conditions: Soliton Profiles}\label{sec:soliton-profiles}
 
-The initialisation procedure within \PyUltraLight can be easily augmented to accommodate the requirements of the user. In the current implementation, the initial field configuration is built by loading a NumPy array file encoding a solitonic solution to the Schr{\"o}dinger-Poisson system. Using this method, solitons may be placed at the desired locations within the simulation grid, with the corresponding mass, velocity, and phase parameters each specified by the user within the accompanying Jupyter notebook. 
+\PyUltraLight specifies the initial dark matter configuration as a superposition of an arbitrary number of solitonic halos, with arbitrary (user-defined) velocities and phases. This is necessarily an idealisation, given that realistic dark matter halos will not map directly to the solitonic solutions, but it provides an excellent ``playground'' in which to explore ULDM dynamics, and the initialisation routines within \PyUltraLight can be easily augmented to accommodate a wider range of scenarios. The initial field configuration is built by loading a NumPy array file encoding a solitonic solution to the Schr{\"o}dinger-Poisson system and the corresponding position mass, velocity, and phase parameters each specified by the user within the accompanying Jupyter notebook. In practice, only a finite  range of halo masses can be supported within a given simulation -- the  radius of a solitonic halo is inversely proportional to it mass, so resolve a light halo interacting with a very massive halo would require an extremely fine spatial mesh. \re{is there a power to this, or $r \sim 1/M_{halo}$?} \re{to here}
 
 The solitonic solution to the SP system is a natural choice of initial field configuration; these stable, localised objects are ubiquitous in ULDM models \cite{Marsh2015}. 
 
