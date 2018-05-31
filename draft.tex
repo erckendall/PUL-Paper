@@ -263,7 +263,7 @@ In this section we validate \PyUltraLight a by reproducing results from previous
 
 
 
-The outcomes of ULDM soliton collisions depend critically on  whether the total energy of the isolated binary system is positive or negative. With a positive total energy the solitons pass through each other, emerging largely undisturbed from their initial configurations and the wavefunctions describing the solitons are superposed during the collision,, yielding distinctive interference patterns. 
+The outcomes of ULDM soliton collisions depend critically on  whether the total energy of the isolated binary system is positive or negative. With a positive total energy the solitons pass through each other, emerging largely undisturbed from their initial configurations and the wavefunctions describing the solitons are superposed during the collision, yielding distinctive interference patterns. 
 
 Following \cite{Schwabe2016}, we consider the head-on collision of two solitions with mass ratio $\mu=2$ and high relative velocity. This simple case can be treated approximately. Starting from equation \ref{eq:covariant-solution} we  write the total wavefunction of the binary system in terms of dimensionless quantities along the collision axis as
 \begin{align}
@@ -282,31 +282,53 @@ where $x_1$ and $x_2$ are the initial centrals positions of the solitions, $v_1$
 
 \subsection{Effective Forces Due to Destructive Interference}
 
-As demonstrated in \cite{Paredes2016}, the wavelike properties of ULDM can give rise to effective forces which can dramatically affect the dynamics of core collisions. These effective forces arise as a result of interference phenomena, and do not require the ULDM model to incorporate explicit local interactions. Figure \ref{fig:repulsion} shows the results of two simulations using \PyUltraLight in which two solitons of equal mass undergo a head-on collision. Contours of the density profile along the plane of symmetry are displayed. In the first simulation, there is no phase offset between the initial solitons, while in the second simulation the phases differ by $\pi$. We can see that the result of this phase shift is to create an effective repulsive force between the two solitons as they approach one another. Further discussion of this phenomenon and its possible observational consequences can be found in \cite{Paredes2016}.
 \begin{figure}
   \includegraphics[width=1.\textwidth, trim={0 0 0 0},clip]{phase_comparison}
   \caption{Head-on collisions between two solitons of mass 5, relative velocity 6, and initial separation 4 in code units. Time progresses from left to right across each row.}
   \label{fig:repulsion}
 \end{figure}
 
+As demonstrated in \cite{Paredes2016}, the wavelike properties of ULDM can give rise to effective forces which can dramatically affect the dynamics of core collisions. These effective forces arise as a result of interference phenomena, and do not require the ULDM model to incorporate explicit local interactions. Figure \ref{fig:repulsion} shows the results of two simulations using \PyUltraLight in which two solitons of equal mass undergo a head-on collision. Contours of the density profile along the plane of symmetry are displayed. In the first simulation, there is no phase offset between the initial solitons, while in the second simulation the phases differ by $\pi$. We can see that the result of this phase shift is to create an effective repulsive force between the two solitons as they approach one another. Further discussion of this phenomenon and its possible observational consequences can be found in \cite{Paredes2016}.
+
+
 \vspace{1em}
 
 \subsection{Tidal Disruption of Solitons Orbiting a Central Potential}\label{sec:disruption}
 
-\PyUltraLight is designed such that a central potential may be included by way of a point-mass located at the centre of the simulation grid. While this setup is somewhat unphysical, it provides a starting point for a study of the stability of satellite dark matter halos orbiting a much larger object. Studies of this type can be used to make predictions regarding the lifespans of satellite galaxies around the Milky Way, offering a potential resolution of the so-called missing satellites problem \cite{Weinberg2015}.
-
-An extensive study of the tidal disruption of ULDM solitonic cores orbiting a central potential has recently been undertaken in \cite{Du2018}. Here, we reproduce just one of their results as an additional validity check for \PyUltraLight. In particular, we reproduce the characteristic internal velocity field of a tidally-locked soliton orbiting a central potential. 
-
-When the SP system is recast as a system of hydrodynamical equations, the fluid velocity is given by the gradient of the smoothly-varying phase at any point. This implies that the velocity flow of the SP system is irrotational, $\nabla\times\vec{v}=0$. When a soliton is initialised in a circular orbit around a Newtonian potential, the initially spherical profile is distorted, elongated along the radial direction of the central potential. Meanwhile, the velocity field corresponding to the overall orbital motion of the soliton is superposed with the internal velocity field, combining so as to produce a net flow with vanishing curl. The family of Riemann-S ellipsoids describe uniformly rotating bodies which satisfy the condition of irrotationality \cite{Chandrasekhar1965}, and it is therefore the characteristic internal velocity field of such an ellipsoid which we expect to arise during the simulation. It is found in \cite{Du2018} that an initially spherical solitonic core without self-rotation will gradually spin up to form a tidally-locked irrotational Riemann-S ellipsoid when orbiting a host mass. We are able to reproduce this result using \PyUltraLight, with Figure \ref{fig:riemann} showing the internal velocity field of a solitonic satellite after one complete revolution around a host mass, obtained using \PyUltraLight on a $256^3$ simulation grid. In this case the ratio of host to satellite mass was $\approx 55$. It can be seen that the soliton has become elongated along the radial line connecting to the host, indicating that it is tidally locked. Meanwhile the internal velocity field can be seen to be that of an irrotational Riemann-S ellipsoid \cite{Daller2012}.
 \begin{figure}
   \includegraphics[width=1.\textwidth,trim=1cm 1cm 0 1cm,clip]{riemann}
   \caption{Solitonic core after one revolution of a central potential, demonstrating the internal velocity field of an irrotational Riemann-S ellipsoid (where the collective motion of the soliton has been subtracted from the velocity field). Deformation of the spherical density profile into that of an ellipsoid can be seen, with extension along the radial direction (red arrow).}
   \label{fig:riemann}
 \end{figure}
 
-\vspace{1em}
+\PyUltraLight is designed such that a central potential may be included by way of a point-mass located at the centre of the simulation grid. While this setup is somewhat unphysical, it provides a starting point for a study of the stability of satellite dark matter halos orbiting a much larger object. Studies of this type can be used to make predictions regarding the lifespans of satellite galaxies around the Milky Way, offering a potential resolution of the so-called missing satellites problem \cite{Weinberg2015}.
+
+An extensive study of the tidal disruption of ULDM solitonic cores orbiting a central potential has recently been undertaken in \cite{Du2018}. Here, we reproduce just one of their results as an additional validity check for \PyUltraLight. In particular, we reproduce the characteristic internal velocity field of a tidally-locked soliton orbiting a central potential. 
+
+When the SP system is recast as a system of hydrodynamical equations, the fluid velocity is given by the gradient of the smoothly-varying phase at any point. This implies that the velocity flow of the SP system is irrotational, $\nabla\times\vec{v}=0$. When a soliton is initialised in a circular orbit around a Newtonian potential, the initially spherical profile is distorted, elongated along the radial direction of the central potential. Meanwhile, the velocity field corresponding to the overall orbital motion of the soliton is superposed with the internal velocity field, combining so as to produce a net flow with vanishing curl. The family of Riemann-S ellipsoids describe uniformly rotating bodies which satisfy the condition of irrotationality \cite{Chandrasekhar1965}, and it is therefore the characteristic internal velocity field of such an ellipsoid which we expect to arise during the simulation. It is found in \cite{Du2018} that an initially spherical solitonic core without self-rotation will gradually spin up to form a tidally-locked irrotational Riemann-S ellipsoid when orbiting a host mass. We are able to reproduce this result using \PyUltraLight, with Figure \ref{fig:riemann} showing the internal velocity field of a solitonic satellite after one complete revolution around a host mass, obtained using \PyUltraLight on a $256^3$ simulation grid. In this case the ratio of host to satellite mass was $\approx 55$. It can be seen that the soliton has become elongated along the radial line connecting to the host, indicating that it is tidally locked. Meanwhile the internal velocity field can be seen to be that of an irrotational Riemann-S ellipsoid \cite{Daller2012}.
+
+
+%\vspace{1em}
 
 \subsection{Energy Conservation}\label{sec:energy}
+
+\begin{figure}
+  \includegraphics[width=1.1\textwidth,trim=2.5cm 0 0 1cm,clip]{combined_energy_and_density1}
+  \caption{Left: Evolution of the density profile of a solitonic core at equally spaced times as it undergoes tidal disruption in a potential centred at the red cross. Right: Evolution of the energy of the system, where times are indicated in correspondence with the snapshots of the density profile. All quantities are in dimensionless code units.}
+  \label{fig:combined_1}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=0.9\textwidth,trim=0 0 2cm 2cm,clip]{egy_m=22.eps}
+  \caption{Evolution of the energy for a binary soliton system with each soliton in an elliptical orbit around the common centre of mass.}
+  \label{fig:binary}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=0.9\textwidth,trim=0 0.5cm 0 0,clip]{Total_Energy_Change.eps}
+  \caption{Demonstration of improving energy conservation with simulation resolution for a binary system of solitons orbiting their common centre of mass.}
+  \label{fig:energy_change}
+\end{figure}
 
 In addition to the evolution of the condensate wavefunction $\psi$ and the potential $\Phi$, \PyUltraLight also evaluates the energy of the SP system. An important achievement of the code is sub-percent level energy conservation, even at relatively low spatial resolution, for all dynamical scenarios tested. In this section we derive the expression for the total energy of the SP system and discuss its decomposition into individual constituents calculated separately within the code. We then present the numerical energy evolution of a variety of configurations. 
 
@@ -331,48 +353,11 @@ where in the last step we have used Stokes' Theorem as well as the Poisson equat
 
 The two terms in the integral \ref{eq:energy-tot} are calculated separately within the code. It is easy to see that the first term represents the gravitational potential energy of the SP system. As discussed in \cite{Hui2016}, the second term may be decomposed further into two contributions which may be considered separately as kinetic and `quantum' energies, but for the purposes of this implementation it is sufficient to consider only their combined contribution. Because \PyUltraLight provides the option to include the central potential of a point mass located at the centre of the simulation grid, we have additional energy contributions when such a potential is included. Because this central potential does not arise from a ULDM object, we calculate the gravitational potential energy due to self-interaction separately from the gravitational potential energy due to the central potential.
 
-Figures \ref{fig:combined_1} and \ref{fig:binary} demonstrate energy conservation for two example simulation scenarios. In the first case, we examine the evolution of the energy for a single soliton undergoing significant tidal disruption within a Newtonian central potential. We see that as the soliton is disrupted, the kinetic energy increases, while the gravitational energy due to the central potential decreases, as expected. Meanwhile, the gravitational potential energy due to self-interaction gradually increases toward zero as the disruption continues. The sum of the individual energy components is conserved to $10^{-2}\ \%$ in this case, where the simulation was run at $256^3$. Higher grid resolutions result in even better energy conservation. Figure \ref{fig:binary} demonstrates the evolution of the energy of a binary system of solitons in elliptical orbits around their common centre of mass. In this case the simulation ran for approximately three orbital periods at $256^3$. At points of closest approach, it can be clearly seen that the kinetic energy increases as the solitons speed up, while the potential energy due to self-interaction decreases commensurately. In this scenario no central potential has been included, so the gravitational energy due to the central potential stays uniformly zero throughout the simulation and is not plotted in the Figure. It can also be seen that as the solitons reach the first point of closest approach, they become slightly deformed, exciting oscillatory modes which are manifest in the Figure as small scale oscillations superposed on the global behaviour. In this case the total energy is conserved to $10^{-3}\ \%$.
+Figures \ref{fig:combined_1} and \ref{fig:binary} demonstrate energy conservation for two example simulation scenarios. In the first case, we examine the evolution of the energy for a single soliton undergoing significant tidal disruption within a Newtonian central potential. For this simulation a soliton of mass 12 in code units was initialised at a radial distance of 3 code units from the centre of a Newtonian central potential generated by a central mass of 1000 code units. We see that as the soliton is disrupted, the kinetic energy increases, while the gravitational energy due to the central potential decreases, as expected. Meanwhile, the gravitational potential energy due to self-interaction gradually increases toward zero as the disruption continues. The sum of the individual energy components is conserved to $10^{-2}\ \%$ in this case, where the simulation was run at $256^3$. Higher grid resolutions result in even better energy conservation. 
 
+Figure \ref{fig:binary} demonstrates the evolution of the energy of a binary system of solitons in elliptical orbits around their common centre of mass. In this case the simulation ran for approximately three orbital periods at $256^3$. In dimensionless code units, the soliton mass was 22, the initial separation was 2, and the initial relative velocity was 3.6. At points of closest approach, it can be clearly seen that the kinetic energy increases as the solitons speed up, while the potential energy due to self-interaction decreases commensurately such that the total energy is conserved. In this scenario no central potential has been included, so the gravitational energy due to the central potential stays uniformly zero throughout the simulation and is not plotted in the Figure. It can also be seen that as the solitons reach the first point of closest approach, they become slightly deformed, exciting oscillatory modes which are manifest in the Figure as small scale oscillations superposed on the global behaviour. In this case the total energy is conserved to $10^{-3}\ \%$.
 
-% \begin{figure}[tbp]
-% \centering 
-% \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{density_diagram1}
-% \caption{Density profile of solitonic core at equally spaced times as it undergoes tidal disruption in a potential centred at the red cross.}\label{fig:density_diagram1}
-% \end{figure}
-
-% \begin{figure}[tbp]
-% \centering 
-% \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{energy_diagram1}
-% \caption{Evolution of the energy of the system illustrated in Figure \ref{fig:density_diagram1}. Times are indicated in correspondence with the snapshots of the density profile. }\label{fig:energy_diagram_1}
-% \end{figure}
-
-% \begin{figure}[tbp]
-% \centering 
-% \includegraphics[width=1.1\textwidth,trim=2.5cm 0 0 1cm,clip]{combined_energy_and_density1}
-% \caption{Left: Evolution of the density profile of a solitonic core at equally spaced times as it undergoes tidal disruption in a potential centred at the red cross. Right: Evolution of the energy of the system, where times are indicated in correspondence with the snapshots of the density profile. All quantities are in dimensionless code units.}\label{fig:combined_1}
-% \end{figure}
-
-% \begin{figure}[tbp]
-% \centering 
-% \includegraphics[width=1.\textwidth,trim=0 0 2cm 2cm,clip]{energy_diagram2}
-% \caption{Evolution of the energy for a binary soliton system with each soliton in an elliptical orbit around the common centre of mass.}\label{fig:binary}
-% \end{figure}
-
-
-\begin{figure}
-  \includegraphics[width=1.1\textwidth,trim=2.5cm 0 0 1cm,clip]{combined_energy_and_density1}
-  \caption{Left: Evolution of the density profile of a solitonic core at equally spaced times as it undergoes tidal disruption in a potential centred at the red cross. Right: Evolution of the energy of the system, where times are indicated in correspondence with the snapshots of the density profile. All quantities are in dimensionless code units.}
-  \label{fig:combined_1}
-\end{figure}
-
-\begin{figure}
-  \includegraphics[width=0.9\textwidth,trim=0 0 2cm 2cm,clip]{egy_m=22.eps}
-  \caption{Evolution of the energy for a binary soliton system with each soliton in an elliptical orbit around the common centre of mass.}
-  \label{fig:binary}
-\end{figure}
-
-
-
+Figure \ref{fig:energy_change} demonstrates the relationship between the total integrated energy and the grid resolution for the same binary system of solitons used to generate Figure \ref{fig:binary}. While energy is conserved at sub-percent level even for low resolutions ($96^3$), this is dramatically improved at higher grid resolutions. 
 
 
 \section{Discussion and Outlook}
