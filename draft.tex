@@ -251,7 +251,7 @@ In place of the CFL condition, the \PyUltraLight timestep can be set via the flu
 \begin{equation}\label{eq:madelung}
     \psi\equiv\sqrt{\rho}e^{i\theta}, \quad \vec{v}\equiv\boldsymbol{\nabla}\theta.
 \end{equation}
-We define a `maximum velocity' for the simulation grid at which point the fluid appears to move backward because the phase change between successive grid points exceeds $\pi$. An upper bound can then be placed on the timestep so that fluid travelling at this maximum  velocity traverse a distance of one grid space per timestep.  In practice this can yield a very demanding constraint on the timestep and for many scenarios the actual velocity is far less than this hypothetical limit. Consequently, the timestep can be  significantly increased at the user's discretion by changing the `step\textunderscore factor' parameter in the preliminary section of the Jupyter notebook. When this is done, convergence testing on a case-by-case basis is strongly encouraged.\sh{I wonder whether it is worth mentioning that the two pieces of the split step method are exact to arbitrary large times when the other piece isn't present.}\ek{I'm not quite sure what you mean by `when the other piece isn't present', but I have a feeling that bringing this up here might cause confusion}
+We define a `maximum velocity' for the simulation grid at which point the fluid appears to move backward because the phase change between successive grid points exceeds $\pi$. An upper bound can then be placed on the timestep so that fluid travelling at this maximum  velocity traverse a distance of one grid space per timestep.  In practice this can yield a very demanding constraint on the timestep and for many scenarios the actual velocity is far less than this hypothetical limit. Consequently, the timestep can be  significantly increased at the user's discretion by changing the `step\textunderscore factor' parameter in the preliminary section of the Jupyter notebook. When this is done, convergence testing on a case-by-case basis is strongly encouraged.
 
 
 \section{ULDM Dynamics with \PyUltraLight}\label{sec:test}
@@ -383,11 +383,11 @@ Energy conservation within \PyUltraLight is excellent, at sub-percent level for 
 
 \PyUltraLight is Python-based, and as such is particularly simple to understand and use. The accompanying Jupyter notebook allows for the efficient adjustment of simulation parameters, and offers a useful browser interface for quick visualisation of simulation results. While Python-based, the code makes use of low-level language resources, namely the FFTW libraries through the use of the Pythonic pyFFTW wrapper and will operate at $\sim 80\%$ efficiency on a 16 core desktop workstation, suggesting that it is computationally efficient. 
 
-The current implementation of \PyUltraLight is already a useful tool for simulating dynamical ULDM systems and exploring their dynamics However, there is much scope for  improvement. In particular, future releases may incorporate a variable timestep and more sophisticated physics, including explicit self-interactions in the axion sector or additional matter components\sh{We could also mention the inclusion of other types of central potentials}\ek{I had this in here originally but Richard's recommendation was that we leave it out as we don't want to `reveal our hand'}.  \PyUltraLight is publicly available under a BSD license. 
+The current implementation of \PyUltraLight is already a useful tool for simulating dynamical ULDM systems and exploring their dynamics However, there is much scope for  improvement. In particular, future releases may incorporate a variable timestep and more sophisticated physics, including explicit self-interactions in the axion sector or additional matter components. \PyUltraLight is publicly available under a BSD license. 
 
 \acknowledgments
 
-We thank Nathan Musoke, Jens Niemeyer (and group -- names?)\sh{The only other person I think we've explicitly spoken to about stuff in this paper is Xiaolong Du (and maybe David Marsh by the time we submit if he replies to your email}, for valuable discussions, and thank Miro Erkintalo for advice on Schr{\"o}dinger-Poisson solvers  in optical systems.  We acknowledge support from the Marsden Fund of the Royal Society of New Zealand, the use of the New Zealand eScience Infrastructure (NeSI) high-performance computing facilities, which are funded jointly by NeSI's collaborator institutions and through the Ministry of Business, Innovation \& Employment's Research Infrastructure programme \url{https://www.nesi.org.nz}, (PLUS SPECIFIC NAMES OF PEOPLE AT NESI WHO HELPED??). (SHAUN -- PEOPLE WHO PUT YOU UP ON TRAVEL??) (FABER -- any names of yours?)\sh{I don't know if we received any explicit help from particular people at NESI. I've been put up in places but not relating to work on this. Jens and I discussed this at a conference, but my attendance at the conference was paid for by Auckland}
+We thank Nathan Musoke, Jens Niemeyer, Xiaolong Du, and David Marsh for valuable discussions, and thank Miro Erkintalo for advice on Schr{\"o}dinger-Poisson solvers  in optical systems.  We acknowledge support from the Marsden Fund of the Royal Society of New Zealand, the use of the New Zealand eScience Infrastructure (NeSI) high-performance computing facilities, which are funded jointly by NeSI's collaborator institutions and through the Ministry of Business, Innovation \& Employment's Research Infrastructure programme \url{https://www.nesi.org.nz}. 
 
 
 \appendix
@@ -407,7 +407,7 @@ We thank Nathan Musoke, Jens Niemeyer (and group -- names?)\sh{The only other pe
 % We however suggest to always provide author, title and journal data:
 % in short all the informations that clearly identify a document.
 
-\re{Check the bib options so we don't see all the Planck authors :-) }\ek{I've modified the bibliography style file so that only the first 3 authors will be  displayed if there are more than 3. I can't seem to find official JCAP guidance on this - Does it look OK to you in this format?}
+
 
 %\section*{References}
 \bibliographystyle{JHEP-mod}
