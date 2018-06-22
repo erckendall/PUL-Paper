@@ -349,14 +349,14 @@ FUNCTION {format.editors}
 FUNCTION {format.title}
 { title empty$
     { "" }
-    { "{\it " title "t" change.case$ * "}, " * }
+    { "{\it " title * "}, " * }
   if$
 }
 
 FUNCTION {format.title.p}
 { title empty$
     { "" }
-    { "``" title "t" change.case$ * ".''" * }
+    { "``" title * ".''" * }
   if$
 }
 
