@@ -10,8 +10,8 @@
 \usepackage{xspace}
 \usepackage{color}
 \usepackage{url}
-\usepackage{aas_macros}
-\usepackage[justification=justified]{caption}
+%\usepackage{aas_macros}
+
 
 
 
@@ -42,13 +42,8 @@
 \emailAdd{r.easther@auckland.ac.nz}
 
 
-\newcommand{\apj}{Astrophysical J.}
-\newcommand{\prd}{Phys. Rev. D}
-\newcommand{\mnras}{Mon. Notices Royal Astron. Soc}
 \newcommand{\PyUltraLight}{\textsc{PyUltraLight}\xspace}
-\newcommand{\re}[1]{\textcolor{blue}{[{\bf RE}: #1]}}
-\newcommand{\ek}[1]{\textcolor{red}{[{\bf EK}: #1]}}
-\newcommand{\sh}[1]{\textcolor{green}{[{\bf SH}: #1]}}
+
 
 \abstract{\PyUltraLight  simulates the dynamics of ultralight dark matter in a non-expanding background. \PyUltraLight can describe the evolution of several interacting ultralight dark matter halos  or one or more halos orbiting a central, fixed Newtonian potential, the latter scenario corresponding to dwarf galaxies orbiting a massive central galaxy. We verify  \PyUltraLight  by showing that it reproduces qualitative dynamical features of previously published simulations and demonstrate that it has  excellent energy-conservation properties.   \PyUltraLight is implemented in a Python-based Jupyter notebook, solving the Schr{\"o}dinger-Poisson equation  governing  ultralight scalar field dark matter dynamics in the non-relativistic regime using a symmetrised split-step pseudospectral  algorithm. The notebook interface makes it simple to specify simulation parameters and  visualise the resulting output but performance-critical routines are managed via calls to computationally efficient compiled libraries. \PyUltraLight  runs on standard desktop hardware with support for shared memory mutlithreading and is available on GitHub.}
 
@@ -113,7 +108,10 @@ We have thus shown that $\psi$ satisfies the Schr{\"o}dinger equation in this li
 \begin{equation}\label{eq:poisson}
     \nabla^2\Phi=4\pi G m \vert\psi\vert^2,
 \end{equation}
-where $G$ is Newton's gravitational constant. The coupled equations \ref{eq:schrodinger} and \ref{eq:poisson} together form the nonlinear Schr{\"o}dinger-Poisson system which describes the dynamics of ULDM in the non-relativistic regime. It is this system of equations which \PyUltraLight is designed to solve. 
+where $G$ is Newton's gravitational constant. The coupled equations \ref{eq:schrodinger} and \ref{eq:poisson} together form the nonlinear Schr{\"o}dinger-Poisson system which describes the dynamics of ULDM in the non-relativistic regime. While Equations \ref{eq:schrodinger} and \ref{eq:poisson} are valid for open boundary conditions, \PyUltraLight is designed to solve the Schr{\"o}dinger-Poisson system under periodic boundary conditions. In this case the correct form of equation \ref{eq:poisson} is 
+\begin{equation}\label{eq:poisson_periodic}
+    \nabla^2\Phi=4\pi G m \big(\vert\psi\vert^2-\langle\vert\psi\vert^2\rangle\big).
+\end{equation}
 
 
 \subsection{Field Rescalings}
@@ -122,7 +120,7 @@ It is helpful to recast the Schr{\"o}dinger-Poisson system (equations \ref{eq:sc
 \begin{align}
     \CMcal{L}&=\left(\frac{8\pi\hbar^2}{3 m^2H_0^2\Omega_{m_0}}\right)^{\frac{1}{4}}\approx121\left(\frac{10^{-23}\operatorname{eV}}{m}\right)^{\frac{1}{2}}\operatorname{kpc},\label{eq:length}\\
     \CMcal{T}&=\left(\frac{8\pi}{3 H_0^2\Omega_{m_0}}\right)^{\frac{1}{2}}\approx75.5 \operatorname{Gyr},\label{eq:time}\\
-    \CMcal{M}&=\frac{1}{G}\left(\frac{8\pi}{3 H_0^2\Omega_{m_0}}\right)^{-\frac{1}{4}}\left(\frac{\hbar}{m}\right)^{\frac{3}{2}}\approx 7\times 10^7\left(\frac{10^{-23}\operatorname{eV}}{m}\right)\operatorname{M}_{\odot},\label{eq:mass}
+    \CMcal{M}&=\frac{1}{G}\left(\frac{8\pi}{3 H_0^2\Omega_{m_0}}\right)^{-\frac{1}{4}}\left(\frac{\hbar}{m}\right)^{\frac{3}{2}}\approx 7\times 10^7\left(\frac{10^{-23}\operatorname{eV}}{m}\right)^{\frac{3}{2}}\operatorname{M}_{\odot},\label{eq:mass}
 \end{align}
 where $m$ is the mass of the ultralight scalar field, $H_0$ is the present-day Hubble parameter, $G$ is Newton's gravitational constant and $\Omega_{m_0}$ is the present-day matter fraction of the energy density of the universe. We  recast equations \ref{eq:schrodinger} and \ref{eq:poisson} in terms of the  dimensionless quantities
 \begin{equation}\label{eq:dimensionless}
@@ -131,10 +129,10 @@ where $m$ is the mass of the ultralight scalar field, $H_0$ is the present-day H
     \Phi'=\frac{m\CMcal{T}}{\hbar}\Phi,\quad
     \psi'=\CMcal{T}\sqrt{mG}\psi.
 \end{equation}
-Dropping the primes for notational convenience, we see that the coupled differential equations of the  Schr{\"o}dinger-Poisson system  reduce to 
+Dropping the primes for notational convenience, we see that the coupled differential equations of the  Schr{\"o}dinger-Poisson system under periodic boundary conditions reduce to 
 \begin{align}
     i\Dot{\psi}(\vec{x},t)&=-\frac{1}{2}\nabla^2\psi(\vec{x},t)+\Phi(\vec{x},t)\psi(\vec{x},t),\label{eq:s-adim}\\
-    \nabla^2\Phi(\vec{x},t)&=4\pi\vert\psi(\vec{x},t)\vert^2,\label{eq:p-adim}
+    \nabla^2\Phi(\vec{x},t)&=4\pi\big(\vert\psi(\vec{x},t)\vert^2-\langle\vert\psi(\vec{x},t)\vert^2\rangle\big),\label{eq:p-adim}
 \end{align}
 where it is understood that all quantities involved are dimensionless. We can recover  dimensionful quantities via the ``dictionary'' provided by equations \ref{eq:length} to \ref{eq:mass}. For example, the integrated mass of the system, $M_{tot}$, is given by
 \begin{equation}\label{eq:integrated-mass}
@@ -145,7 +143,7 @@ Likewise, the mass density at any point is given by
     \rho=\CMcal{M}\CMcal{L}^{-3}\vert\psi\vert^2.
 \end{equation}
 By dimensional analysis, we can easily restore dimensionful units to any of the quantities calculated by the code. In particular, in the following sections it is to be understood that
-\begin{equation}\label{eq:density}
+\begin{equation}
     E=\CMcal{M}\CMcal{L}^2\CMcal{T}^{-2}\ E_{code}, \quad v=\CMcal{L}\CMcal{T}^{-1}\ v_{code}, 
 \end{equation}
 where $E$ and $v$ represent energy and velocity, respectively. \PyUltraLight\ works internally with these dimensionless quantities but can receive initial conditions and generates output in physical units. Henceforth, we will often refer to $\vert\psi\vert^2$  as the density, where it is understood that this is in fact a dimensionless quantity related to the physical mass density via the constant of proportionality given by equation \ref{eq:density}.
@@ -198,10 +196,10 @@ where the order of operations runs from right to left, $\CMcal{F}$ and $\CMcal{F
     \Phi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)=\CMcal{F}^{-1}\left(-\frac{1}{k^2}\right)\CMcal{F}\ 4\pi\vert\psi(\vec{x},t_{i})\vert^2,
 \end{equation}
 %
-where $\psi(\vec{x},t_{i})$ is the field configuration at this halfway point in the full timestep. The final operation in equation \ref{eq:schematic-psi}  only changes the phase of  $\psi$, so we could replace $\psi(\vec{x},t_{i})$ with $\psi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)$ in equation \ref{eq:schematic-phi} with no change in meaning. \PyUltraLight makes an additional simplification to the symmetrised split-step Fourier method by combining the consecutive half-steps in the nonlinear term into a single full step. Consequently, only the first and last operations involve actual half steps. Schematically this becomes 
+where $\psi(\vec{x},t_{i})$ is the field configuration at this halfway point in the full timestep.\footnote{Unlike Equation \ref{eq:poisson_periodic}, in Equation \ref{eq:schematic-phi} the global average value of the density is not subtracted from the local value. This is because subtraction of a constant affects only the $k=0$ Fourier mode, which is manually set to zero within the code prior to the final inverse Fourier transform. Therefore, the subtraction of the average density has no effect on the final result, and is consequently not incorporated into the algorithm.} The final operation in equation \ref{eq:schematic-psi}  only changes the phase of  $\psi$, so we could replace $\psi(\vec{x},t_{i})$ with $\psi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)$ in equation \ref{eq:schematic-phi} with no change in meaning. \PyUltraLight makes an additional simplification to the symmetrised split-step Fourier method by combining the consecutive half-steps in the nonlinear term into a single full step. Consequently, only the first and last operations involve actual half steps. Schematically this becomes 
 %
 \begin{equation}
-    \psi(t\hspace*{-.2em}+\hspace*{-.2em}nh)=\operatorname{exp}\left[+\frac{ih}{2}\Phi\right]\left(\prod^n\operatorname{exp}\left[-\frac{ih}{2}\Phi\right]\operatorname{exp}\left[\frac{ih}{2}\nabla^2\right]\right)\operatorname{exp}\left[-\frac{ih}{2}\Phi\right]\psi(t),
+    \psi(t\hspace*{-.2em}+\hspace*{-.2em}nh)=\operatorname{exp}\left[+\frac{ih}{2}\Phi\right]\left(\prod^n\operatorname{exp}\left[-ih\Phi\right]\operatorname{exp}\left[\frac{ih}{2}\nabla^2\right]\right)\operatorname{exp}\left[-\frac{ih}{2}\Phi\right]\psi(t),
 \end{equation}
 %
 where  $\Phi$  is updated at each step via equation \ref{eq:schematic-phi}; attention is drawn to the sign difference between the first and last operators.
@@ -245,15 +243,29 @@ The Schr{\"o}dinger equation is not trivially form invariant under Galilean boos
 %
 To construct the initial field configuration,  \PyUltraLight, loads the NumPy array encoding the radial profile $f(r)$ for the $\left. f(r)\right|_{r=0}=1$ case. Equation \ref{eq:covariant-solution} is then used to transform the this solution into soliton(s) with user-specified values position, mass, and velocity specified, via the accompanying Jupyter notebook. The user may also add an additional constant phase factor if desired.
 
-\subsection{Timestep Constraints}
+\subsection{Choosing the Timestep}
 
-In many finite-differencing schemes for  partial differential equations the Courant-Friedrichs-Lewy (CFL) condition is a necessary condition for convergence \cite{Ajaib:2013oua}, and puts an upper bound on the timestep as a function of the gridsize. The physical origin of the CFL condition is the finite speed of propagating information  in the evolving system.  Consequently, this condition is often cited in numerical analysis of ULDM physics governed by the Schr{\"o}dinger-Poisson system, see e.g. Ref.~\cite{Schwabe:2016rze}. Strictly speaking, however, the CFL condition is applicable to codes using finite differencing methods for spatial derivatives, and is thus not applicable to pseudospectral codes like \PyUltraLight.   We also note that the Poisson equation is acausal in that it responds globally and instantaneously to local changes in the matter distribution. However, the Schr{\"o}dinger-Poisson equation is an approximation derived  in the nonrelativistic limit so this is not a shortcoming in regimes where the underlying equations are physically valid.
+When employing the method of finite differences to numerically solve systems of partial differential equations, the Courant-Friedrichs-Lewy (CFL) condition is a necessary condition for convergence \cite{Ajaib:2013oua}. This condition puts an upper bound on the size of the timestep as a function of the grid spacing. Consequently, this condition is often cited in numerical analysis of ULDM physics governed by the Schr{\"o}dinger-Poisson system, see e.g. Ref.~\cite{Schwabe:2016rze}. 
 
-In place of the CFL condition, the \PyUltraLight timestep can be set via the fluid interpretation of the Schr{\"o}dinger-Poisson system, discussed in greater detail in Section \ref{sec:disruption}. In dimensionless code units we define 
+However, because \PyUltraLight uses pseudospectral methods to compute spatial derivatives, the algorithm is unconditionally stable \cite{Taha:1984jz} and timesteps need not be subjected to a CFL-like constraint. Consequently, the choice of timestep is in principle arbitrary, and is generally selected in accordance with accuracy requirements (our split-step algorithm is accurate to second order in the timestep).
+
+While the user is encouraged validate their choice of timestep through convergence testing on a case-by-case basis, \PyUltraLight does include a default timestep value which is chosen based on maximum fluid velocity arguments. In the fluid interpretation of the Schr{\"o}dinger-Poisson system, we define
 \begin{equation}\label{eq:madelung}
     \psi\equiv\sqrt{\rho}e^{i\theta}, \quad \vec{v}\equiv\boldsymbol{\nabla}\theta.
 \end{equation}
-We define a `maximum velocity' for the simulation grid at which point the fluid appears to move backward because the phase change between successive grid points exceeds $\pi$. An upper bound can then be placed on the timestep so that fluid travelling at this maximum  velocity traverse a distance of one grid space per timestep.  In practice this can yield a very demanding constraint on the timestep and for many scenarios the actual velocity is far less than this hypothetical limit. Consequently, the timestep can be  significantly increased at the user's discretion by changing the `step\textunderscore factor' parameter in the preliminary section of the Jupyter notebook. When this is done, convergence testing on a case-by-case basis is strongly encouraged.
+This then allows us to define a maximum fluid velocity that can be successfully modelled on a simulation grid of a given resolution. If the phase change between two consecutive grid points exceeds $\pi$, the fluid will appear to move backwards across the grid. Hence, we define the maximum velocity as that corresponding to a phase change of $\pi$ between grid points. We then set the default timestep, $\Delta t$, such that fluid travelling at this maximum velocity will traverse one grid space, $\Delta x$, per timestep. That is to say
+\begin{equation}\label{eq:timestep}
+    \Delta t = \frac{(\Delta x)^2}{\pi}.
+\end{equation}
+We stress that this is merely a choice of timestep, rather than a strict constraint. The motivation for this particular choice of timestep is that if the user finds that their fluid is approaching velocities at which this timestep is no longer sufficiently small for convergence, they will also be approaching the point at which they need to refine the simulation grid. Therefore, choosing the timestep to be smaller than the above default value offers little advantage. In many cases, this choice of timestep will be overly strict, and the user is free to choose a larger timestep by modifying the 'step\textunderscore factor' parameter in the Jupyter notebook.
+
+An alternative method of choosing the timestep, employed for example in \cite{Mocz:2017wlg}, is to ensure that neither of the unitary operators in Equation \ref{eq:schematic-psi} can lead to a phase change of more than $\pi$ for a single grid point over one timestep. However, because the pseudo-spectral algorithm does not compare the phase of a single gridpoint at different points in time, this choice of timestep is also not a requirement for stability. Using this method of choosing the timestep, we find the following set of constraints: 
+\begin{equation}
+    \Delta t < \left[\frac{2\pi}{\Phi_{max}}, \frac{2(\Delta x)^2}{\pi}\right],
+\end{equation}
+where the second of these constraints is generally the stricter of the two, and is equivalent to our previous choice of timestep up to a multiplicative factor of $\mathcal{O}(1)$.
+
+Convergence testing has demonstrated that choosing the timestep according to Equation \ref{eq:timestep} is suitable for the majority of simulation scenarios. This is demonstrated in section \ref{sec:resolution}, where we contrast the performance of \PyUltraLight for differing choices of timestep.
 
 
 \section{ULDM Dynamics with \PyUltraLight}\label{sec:test}
@@ -376,6 +388,52 @@ Figures \ref{fig:combined_1} and \ref{fig:binary} demonstrate energy conservatio
 Figure \ref{fig:binary} demonstrates the evolution of the energy of a binary system of solitons in elliptical orbits around their common centre of mass over three orbital periods. In dimensionless code units, the soliton masses are 22, the initial separation  2, and the initial relative velocity was 3.6. At points of closest approach the kinetic energy increases as the solitons speed up, while the potential energy due to self-interaction decreases commensurately such that the total energy is conserved. In this scenario no central potential has been included. As the solitons reach the first point of closest approach, they become slightly deformed, exciting oscillatory modes which are manifest in the Figure as small scale oscillations superposed on the global behaviour. Figure \ref{fig:energy_change} demonstrates the relationship between the total integrated energy and the grid resolution for the same binary system of solitons used to generate Figure~\ref{fig:binary}. The vertical axis shows the ratio of the deviation in the total energy to the initial value of the energy, where the deviation is measured as the difference between the current and initial values. Energy is conserved at sub-percent level even at low resolutions ($96^3$), and increasing grid resolution greatly improves accuracy.
 
 Figure \ref{fig:energy_change_2} demonstrates the improvement in energy conservation with increasing grid resolution for the case of a single soliton becoming tidally disrupted in a Newtonian central potential. The simulation setup is the same as that used to generate Figure \ref{fig:combined_1}. Namely, a single soliton of mass 12 code units is initialised at a distance of 3 code units from a central mass, $M=1000$. The initial velocity of the soliton is $\sqrt{M/r}$ where $r$ is the radial distance of the soliton from the central mass. The duration of the simulation is 0.5 code units so that the soliton undergoes significant tidal disruption as demonstrated in Figure \ref{fig:combined_1}. While we see that energy is conserved at sub-percent level even for $64^3$ grid resolution, the qualitative behaviour of the mass density distribution in this case is not correct, so we conclude that this resolution is insufficient for convergence despite good energy conservation. This highlights the importance of a multifaceted approach to convergence testing. At $256^3$, energy is conserved to $10^{-4}\ \%$.
+
+\section{Convergence Testing Over Spatial and Temporal Resolution Ranges}\label{sec:resolution}
+
+Having demonstrated improving energy conservation with respect to spatial resolution, we now examine the convergence of the $\psi$ field configuration as spatial resolution and timestep are augmented. To perform this analysis, we initialise a simulation of two solitons diametrically opposed about a large Newtonian central potential. We run the simulation forward until the solitons become significantly tidally disrupted in their orbits, as shown in Figure \ref{fig:disruption}. 
+
+\begin{figure}
+  \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{first_and_last}
+  \caption{TBW}
+  \label{fig:disruption}
+\end{figure}
+
+------------------------------
+%Include figure with first and last configuration of the simulation, caption with parameters used
+
+%Mention that tim,estep 1 not much better than timestep 0.1 look at phase
+%Phase appears to be more sensitive than density to resolution
+-----------------------------
+
+To examine the sensitivity of the final $\psi$ field configuration to changes in spatial resolution, we first run this simulation at $256^3$, with the default timestep. We then re-run the simulation at resolutions ranging from $64^3$ to $320^3$, fixing the timestep in each case to be the same as the $256^3$ run. The final output arrays are then down-sampled such that we obtain five arrays of dimension $64^3$ for comparison. We arrange the array values in order of increasing density, and then analyse the deviation of the phase and the magnitude of $\psi$ from the values of the highest resolution run. The results of this process are shown in Figures \ref{fig:spatial_magnitudes} and \ref{fig:spatial_phases}.
+
+\begin{figure}
+  \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{spatial_discretisation}
+  \caption{Improving convergence of $\vert\psi\vert$ with increased spatial resolution for the simulation shown in Figure \ref{fig:disruption}. Field values are arranged in order of increasing magnitude of the highest resolution run from left to right.}
+  \label{fig:spatial_magnitudes}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{phases}
+  \caption{Deviation of the phase of $\psi$ compared to the highest resolution result ($320^3$). Field values are arranged in order of increasing magnitude from left to right. A slight improvement in phase convergence can be seen for higher density regions to the right.}
+  \label{fig:spatial_phases}
+\end{figure}
+
+To examine the sensitivity of the final $\psi$ field configuration to the choice of the timestep, we run the simulation at $256^3$, choosing the timestep to be 0.1, 1, 10, and 50 times the default timestep. Again we down-sample the output arrays to $64^3$, and arrange the array values in order of $\psi$ field magnitude. We then examine how the phase and magnitude of the field values differ in comparison to the case of 0.1 $\times$ the default timestep. The results of this analysis are shown in Figures \ref{fig:temporal_magnitudes} and \ref{fig:temporal_phases}. 
+
+\begin{figure}
+  \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{temporal_discretisation}
+  \caption{TBW}
+  \label{fig:temporal_magnitudes}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{temporal_phases}
+  \caption{TBW}
+  \label{fig:temporal_phases}
+\end{figure}
+
 
 \section{Discussion and Outlook}
 
