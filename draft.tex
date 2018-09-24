@@ -249,7 +249,7 @@ When employing the method of finite differences to numerically solve systems of 
 
 However, because \PyUltraLight uses pseudospectral methods to compute spatial derivatives, the algorithm is unconditionally stable \cite{Taha:1984jz} and timesteps need not be subjected to a CFL-like constraint. Consequently, the choice of timestep is in principle arbitrary, and is generally selected in accordance with accuracy requirements (our split-step algorithm is accurate to second order in the timestep).
 
-While the user is encouraged validate their choice of timestep through convergence testing on a case-by-case basis, \PyUltraLight does include a default timestep value which is chosen based on maximum fluid velocity arguments. In the fluid interpretation of the Schr{\"o}dinger-Poisson system, we define
+While the user is encouraged to choose their own timestep and validate it through convergence testing on a case-by-case basis, \PyUltraLight does include a default timestep value which is chosen based on maximum fluid velocity arguments. In the fluid interpretation of the Schr{\"o}dinger-Poisson system, we define
 \begin{equation}\label{eq:madelung}
     \psi\equiv\sqrt{\rho}e^{i\theta}, \quad \vec{v}\equiv\boldsymbol{\nabla}\theta.
 \end{equation}
