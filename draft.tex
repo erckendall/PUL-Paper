@@ -391,46 +391,39 @@ Figure \ref{fig:energy_change_2} demonstrates the improvement in energy conserva
 
 \section{Convergence Testing Over Spatial and Temporal Resolution Ranges}\label{sec:resolution}
 
-Having demonstrated improving energy conservation with respect to spatial resolution, we now examine the convergence of the $\psi$ field configuration as spatial resolution and timestep are augmented. To perform this analysis, we initialise a simulation of two solitons diametrically opposed about a large Newtonian central potential. We run the simulation forward until the solitons become significantly tidally disrupted in their orbits, as shown in Figure \ref{fig:disruption}. 
+Having demonstrated improving energy conservation with respect to spatial resolution, we now examine the overall convergence of the $\psi$ field configuration as the spatial resolution and timestep are augmented in a typical simulation. We initialise a simulation of two solitons diametrically opposed about a large Newtonian central potential. We run the simulation forward until the solitons become significantly tidally disrupted in their orbits, as shown in Figure \ref{fig:disruption}. 
 
 \begin{figure}
   \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{first_and_last}
-  \caption{TBW}
+  \caption{Visualisation of the configuration used to test $\psi$ convergence under changes to spatial and temporal resolution. In code units, two solitons of mass $m=20$ are initialised at radial distances $r=2$ from a central mass $M=1000$. The solitons are given initial velocity of $\vert v\vert=\sqrt{M/r}$ in opposing directions, corresponding to a clockwise orbit around the central mass. In code units, the total box size is 10, while the duration of the simulation is 0.25. Time runs from left to right in the figure.}
   \label{fig:disruption}
 \end{figure}
 
-------------------------------
-%Include figure with first and last configuration of the simulation, caption with parameters used
-
-%Mention that tim,estep 1 not much better than timestep 0.1 look at phase
-%Phase appears to be more sensitive than density to resolution
------------------------------
-
-To examine the sensitivity of the final $\psi$ field configuration to changes in spatial resolution, we first run this simulation at $256^3$, with the default timestep. We then re-run the simulation at resolutions ranging from $64^3$ to $320^3$, fixing the timestep in each case to be the same as the $256^3$ run. The final output arrays are then down-sampled such that we obtain five arrays of dimension $64^3$ for comparison. We arrange the array values in order of increasing density, and then analyse the deviation of the phase and the magnitude of $\psi$ from the values of the highest resolution run. The results of this process are shown in Figures \ref{fig:spatial_magnitudes} and \ref{fig:spatial_phases}.
+To examine the sensitivity of the final $\psi$ field configuration to changes in spatial resolution, we first run this simulation at $256^3$, with the default timestep. We then re-run the simulation at resolutions ranging from $64^3$ to $320^3$, fixing the timestep in each case to be the same as the $256^3$ run. The final output arrays are then down-sampled such that we obtain five arrays of dimension $64^3$ for comparison. We arrange the array values in order of increasing density, and then analyse the deviation of the phase and the magnitude of $\psi$ from the values of the highest resolution run. The results of this process are shown in Figures \ref{fig:spatial_magnitudes} and \ref{fig:spatial_phases}. As expected, the lowest resolution run demonstrates poor convergence in both the magnitude and phase of $\psi$, with convergence increasing to acceptable levels at $256^3$.
 
 \begin{figure}
-  \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{spatial_discretisation}
+  \includegraphics[width=1.\textwidth,trim=0 1cm 0 1.2cm,clip]{spatial_discretisation}
   \caption{Improving convergence of $\vert\psi\vert$ with increased spatial resolution for the simulation shown in Figure \ref{fig:disruption}. Field values are arranged in order of increasing magnitude of the highest resolution run from left to right.}
   \label{fig:spatial_magnitudes}
 \end{figure}
 
 \begin{figure}
-  \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{phases}
+  \includegraphics[width=1.\textwidth,trim=0 0.5cm 0 1.2cm,clip]{phases}
   \caption{Deviation of the phase of $\psi$ compared to the highest resolution result ($320^3$). Field values are arranged in order of increasing magnitude from left to right. A slight improvement in phase convergence can be seen for higher density regions to the right.}
   \label{fig:spatial_phases}
 \end{figure}
 
-To examine the sensitivity of the final $\psi$ field configuration to the choice of the timestep, we run the simulation at $256^3$, choosing the timestep to be 0.1, 1, 10, and 50 times the default timestep. Again we down-sample the output arrays to $64^3$, and arrange the array values in order of $\psi$ field magnitude. We then examine how the phase and magnitude of the field values differ in comparison to the case of 0.1 $\times$ the default timestep. The results of this analysis are shown in Figures \ref{fig:temporal_magnitudes} and \ref{fig:temporal_phases}. 
+To examine the sensitivity of the final $\psi$ field configuration to the choice of the timestep, we run the simulation at $256^3$, choosing the timestep to be 0.1, 1, 10, and 50 times the default timestep. Again we down-sample the output arrays to $64^3$, and arrange the array values in order of the $\psi$ field magnitude (as determined by the smallest timestep run). We then examine how the phase and magnitude of the field values differ in comparison to the case of 0.1 $\times$ the default timestep. The results of this analysis are shown in Figures \ref{fig:temporal_magnitudes} and \ref{fig:temporal_phases}. We notice that the deviation of the results of the default timestep from those of the timestep which is 10 times smaller are negligible, indicating that our choice of default timestep is suitably small to ensure convergence. The results remain reasonably accurate as the timestep is increased within $~10$ times the default value. At $50$ times the default value, both phase and magnitude data become significantly less accurate. 
 
 \begin{figure}
-  \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{temporal_discretisation}
-  \caption{TBW}
+  \includegraphics[width=1.\textwidth,trim=0 1cm 0 1cm,clip]{temporal_discretisation}
+  \caption{Deviation of the magnitude of $\psi$ as compared to the simulation run with 0.1 times the default timestep. The convergence of the results for the default timestep with the results from the smaller timestep run demonstrate the suitability of the chosen default. We see relatively good convergence, particularly in high density regions, for a $<10$-fold increase above the default timestep.}
   \label{fig:temporal_magnitudes}
 \end{figure}
 
 \begin{figure}
-  \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{temporal_phases}
-  \caption{TBW}
+  \includegraphics[width=1.\textwidth,trim=0 0.5cm 0 1cm,clip]{temporal_phases}
+  \caption{Deviation of the phase of $\psi$ from the results of the simulation in which the timestep is set to 0.1 times the default. Again we see excellent convergence for the default timestep, and reasonable convergence for $<10$ times the default, with accuracy improving at high density regions.}
   \label{fig:temporal_phases}
 \end{figure}
 
@@ -443,7 +436,7 @@ Energy conservation within \PyUltraLight is excellent, at sub-percent level for 
 
 \PyUltraLight is Python-based, and as such is particularly simple to understand and use. The accompanying Jupyter notebook allows for the efficient adjustment of simulation parameters, and offers a useful browser interface for quick visualisation of simulation results. While Python-based, the code makes use of low-level language resources, namely the FFTW libraries through the use of the Pythonic pyFFTW wrapper and will operate at $\sim 80\%$ efficiency on a 16 core desktop workstation, suggesting that it is computationally efficient. 
 
-The current implementation of \PyUltraLight is already a useful tool for simulating dynamical ULDM systems and exploring their dynamics However, there is much scope for  improvement. In particular, future releases may incorporate a variable timestep and more sophisticated physics, including explicit self-interactions in the axion sector or additional matter components. \PyUltraLight is publicly available under a BSD license. 
+The current implementation of \PyUltraLight is already a useful tool for simulating dynamical ULDM systems and exploring their dynamics However, there is much scope for  improvement. In particular, future releases may incorporate a variable timestep and more sophisticated physics, including explicit self-interactions in the axion sector or additional matter components. Augmented versions of the code may also include higher-order generalisations of the pseudo-spectral method, such as those used in \cite{Levkov:2018kau}. \PyUltraLight is publicly available under a BSD license. 
 
 \acknowledgments
 
