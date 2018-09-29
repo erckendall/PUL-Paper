@@ -117,7 +117,7 @@ where $G$ is Newton's gravitational constant. The coupled equations \ref{eq:schr
 \end{equation}
 where we subtract the average density from the right hand side of the Poisson equation. The form of Equation \ref{eq:poisson_periodic} is a consequence of Gauss' law and the fact that the surface integral of the gradient of the field is identically zero when periodic boundary conditions are imposed. 
 
-\re{do we define $\langle \rangle$? Also -- should we explain in a sentence WHY the form of the equation changes when we go to period b.c.s?}\ek{I've given slightly more info here, think this is sufficient to understand the form of 2.8}
+\ek{I've given slightly more info here, think this is sufficient to understand the form of 2.8} \re{I think this is mostly there, but we should say which surface integral and may cite some of the literature here}
 
 \subsection{Field Rescalings}
 
@@ -201,7 +201,7 @@ where the order of operations runs from right to left, $\CMcal{F}$ and $\CMcal{F
     \Phi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)=\CMcal{F}^{-1}\left(-\frac{1}{k^2}\right)\CMcal{F}\ 4\pi\vert\psi(\vec{x},t_{i})\vert^2,
 \end{equation}
 %
-where $\psi(\vec{x},t_{i})$ is the field configuration at this halfway point in the full timestep. We explicitly set the $k=0$ Fourier mode to zero prior to the final inverse Fourier transform; as a consequence there is no need to subtract the global average density from the local value in Equation \ref{eq:schematic-phi}, in contrast to Equation \ref{eq:poisson_periodic}.\ek{Incorporated this explanation into main text} The final operation in equation \ref{eq:schematic-psi}  only changes the phase of  $\psi$, so we could replace $\psi(\vec{x},t_{i})$ with $\psi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)$ in equation \ref{eq:schematic-phi} with no change in meaning. \PyUltraLight makes an additional simplification to the symmetrised split-step Fourier method by combining the consecutive half-steps in the nonlinear term into a single full step. Consequently, only the first and last operations involve actual half steps. Schematically this becomes 
+where $\psi(\vec{x},t_{i})$ is the field configuration at this halfway point in the full timestep. We explicitly set the $k=0$ Fourier mode to zero prior to the final inverse Fourier transform; as a consequence there is no need to subtract the global average density from the local value in Equation \ref{eq:schematic-phi}, in contrast to Equation \ref{eq:poisson_periodic}. The final operation in equation \ref{eq:schematic-psi}  only changes the phase of  $\psi$, so we could replace $\psi(\vec{x},t_{i})$ with $\psi(\vec{x},t\hspace*{-.2em}+\hspace*{-.2em}h)$ in equation \ref{eq:schematic-phi} with no change in meaning. \PyUltraLight makes an additional simplification to the symmetrised split-step Fourier method by combining the consecutive half-steps in the nonlinear term into a single full step. Consequently, only the first and last operations involve actual half steps. Schematically this becomes 
 %
 \begin{equation}
     \psi(t\hspace*{-.2em}+\hspace*{-.2em}nh)=\operatorname{exp}\left[+\frac{ih}{2}\Phi\right]\left(\prod^n\operatorname{exp}\left[-ih\Phi\right]\operatorname{exp}\left[\frac{ih}{2}\nabla^2\right]\right)\operatorname{exp}\left[-\frac{ih}{2}\Phi\right]\psi(t),
@@ -252,15 +252,16 @@ To construct the initial field configuration,  \PyUltraLight, loads the NumPy ar
 
 The Courant-Friedrichs-Lewy (CFL) condition is an upper bound on the timestep (as a function of grid-spacing) that must be satisfied by many partial differential equation solvers based on finite-differencing  \cite{Ajaib:2013oua} and is often cited in numerical analyses of ULDM via the Schr{\"o}dinger-Poisson system, see e.g. Ref.~\cite{Schwabe:2016rze}. However, the CFL condition expresses a causality constraint, and is generally only strictly applicable to hyperbolic PDEs, whereas the Schr{\"o}dinger-Poisson has only a first order time derivative, even though it is effectively the nonrelativistic limit of the Klein-Gordon equation. Moreover, because \PyUltraLight computes spatial derivatives via a pseudospectral method, technically it is unconditionally stable \cite{Taha:1984jz}. Our split-step algorithm is  second order in the timestep, and its value will always be an empirical tradeoff between computational cost and convergence to the apparent limit in which step is arbitrarily small. Consequently, the user is encouraged to validate their choice  of timestep via case-by-case  convergence testing. 
 
-The default timestep in  \PyUltraLight  is fixed with reference to the fluid interpretation of the Schr{\"o}dinger-Poisson system \cite{Hui:2016ltb}. The fluid interpretation is often used to recast the Schr{\"o}dinger-Poisson system in the form of the Madelung equations \cite{Suarez:2011yf}, such that the system can then be studied using the principles of hydrodynamics.\ek{Slightly more info and reference given here, though I don't want to go into too much detail as the specifics of the fluid representation aren't needed here.} The first step is to define:
+The default timestep in  \PyUltraLight  is fixed with reference to the fluid interpretation of the Schr{\"o}dinger-Poisson system \cite{Hui:2016ltb}. The fluid interpretation is often used to recast the Schr{\"o}dinger-Poisson system in the form of the Madelung equations \cite{Suarez:2011yf}, which a hydrodynamical representation of the system. The first step is to define
 \begin{equation}\label{eq:madelung}
     \psi\equiv\sqrt{\rho}e^{i\theta}, \quad \vec{v}\equiv\boldsymbol{\nabla}\theta.
 \end{equation}
-From this definition of the fluid velocity, we see that if the phase change between two adjacent grid points exceeds $\pi$,\ek{not over a timestep, but at the same point in time} the fluid will appear to move backwards across the grid. Therefore, we set the default timestep, $\Delta t$, such that fluid travelling at this maximum velocity will traverse one grid space, $\Delta x$, per timestep, or
+and to treat $\vec{v}$ as a fluid velocity.  From this perspective, if the phase difference between two adjacent grid points exceeds $\pi$ the fluid will appear to move ``backwards'' across the grid. We thus set the default timestep, $\Delta t$, so that fluid travelling at this maximum velocity traverses one grid space, $\Delta x$, per timestep, or
 \begin{equation}\label{eq:timestep}
     \Delta t = \frac{(\Delta x)^2}{\pi}.
 \end{equation}
-This is a choice, rather than a strict constraint on the timestep. We motivate this choice of timestep by recognising that if the ``fluid'' approaches velocities where the phase appears to switch direction, the configuration will also be approaching the point where the simulation grid is too coarse to fully resolve the dynamics. Hence, making the timestep much smaller than this value may offer little practical advantage. Conversely, in some cases the breakdown may occur in regions of the simulation volume of little physical interest, and the user is free to choose a larger timestep  via the 'step\textunderscore factor' parameter in the Jupyter notebook.
+\re{Tweaked a little; changed phase change to phase difference; the latter sounds more explicitly spatial}
+This is a choice, rather than a strict constraint on $\Delta t$. However, if the ``fluid'' approaches velocities where the phase appears to switch direction, the configuration is approaching the point where the simulation grid is too coarse to fully resolve the dynamics. Hence, a timestep much smaller than this value may offer little practical advantage. However, in some cases the breakdown may occur in regions of the simulation volume that are of little physical interest, and the user is free to choose a larger timestep  via the 'step\textunderscore factor' parameter in the Jupyter notebook.
 
 Alternatively, Ref.~\cite{Mocz:2017wlg} fixes the timestep by ensuring that neither of the unitary operators in Equation \ref{eq:schematic-psi}  lead to a phase change of more than $\pi$ for a single grid point over one timestep. However, because the pseudo-spectral algorithm does not compare the phase of a single gridpoint at different points in time, this choice of timestep is not a requirement for stability. This method gives the following constraints: 
 \begin{equation}
@@ -279,7 +280,7 @@ In this section we validate \PyUltraLight by reproducing results from previous s
 
 \begin{figure}
   \includegraphics[trim={0 0 0 0.9cm},clip, scale=0.9]{interference_patterns}
-  \caption{Comparison of theoretical and numerical density profiles at time of maximal interference for head-on collision of two solitons with mass ratio $\mu=2$ and no relative phase difference. The solitons were chosen with dimensionless masses 5 and 10, with an initial separation of 4 code units and relative velocity of 20 code units. The simulation was run at $256^3$ for a box of side-length 8 code units.}
+  \caption{Comparison of theoretical and numerical density profiles at time of maximal interference for head-on collision of two solitons with mass ratio $\mu=2$ and no relative phase difference. The solitons have dimensionless masses 5 and 10, with an initial separation of 4 code units and relative velocity of 20 code units. The simulation resolution is $256^3$ in a box of side-length 8.}
   \label{fig:interference}
 \end{figure}
 
@@ -303,7 +304,7 @@ where $x_1$ and $x_2$ are the initial central positions of the solitions, $v_1$ 
 
 \begin{figure}
   \includegraphics[width=1.\textwidth, trim={0 0 0 0},clip]{phase_comparison}
-  \caption{Head-on collisions between solitons of mass 20, initial relative velocity 20, and initial separation 1.2 in code units. Contours of constant density are plotted to demonstrate the deformation of the soliton profiles as they converge. Time progresses from left to right across each row and is indicated in code units in each frame. The effective repulsive force generated by a $\pi$ phase shift can be seen in the lower panel.}
+  \caption{Head-on collisions between solitons of mass 20, initial relative velocity 20, and initial separation 1.2 in code units. Plots show contours of constant density; time progresses from left to right across each row and is indicated in code units for each frame. The upper panel shows solutons initially in phase; the effective repulsive force generated by a $\pi$ phase shift can be seen in the lower panel.}
   \label{fig:repulsion}
 \end{figure}
 
@@ -316,7 +317,7 @@ As demonstrated in \cite{Paredes:2015wga}, the wavelike properties of ULDM give 
 
 \begin{figure}
   \includegraphics[width=1.\textwidth,trim=1cm 1cm 0 1cm,clip]{riemann}
-  \caption{Contours of constant density are shown for a solitonic core after one revolution around a central potential. The contours are superimposed upon a background representing the internal velocity field (where bulk motion has been subtracted). The velocity field is qualitatively that of an irrotational Riemann-S ellipsoid, and deformation of the density profile of the soliton along the radial direction (red arrow) can be seen. The host:satellite mass ratio is approximately 55; simulation resolution is $256^3$.}
+  \caption{Contours of constant density for a solitonic core after one revolution around a central potential. Contours are superimposed upon the internal velocity field (with the bulk motion subtracted). This velocity field is qualitatively that of an irrotational Riemann-S ellipsoid, and the deformation of the density profile of the soliton along the radial direction (red arrow) is visible. The host:satellite mass ratio is approximately 55; simulation resolution is $256^3$.}
   \label{fig:riemann}
 \end{figure}
 
@@ -338,25 +339,25 @@ It should be noted that the wider velocity field is not expected to be accuratel
 
 \begin{figure}
   \includegraphics[width=1.1\textwidth,trim=2.5cm 0 0 1cm,clip]{combined_energy_and_density1}
-  \caption{Left: Evolution of the density profile of a solitonic core at equally spaced times as it undergoes tidal disruption in a potential centred at the red cross. Right: Evolution of the energy of the system, where times are indicated in correspondence with the snapshots of the density profile. All quantities are in dimensionless code units.}
+  \caption{Left: Evolution of the density profile of a solitonic core at equally spaced times as it undergoes tidal disruption in a potential centred at the red cross. Right: Evolution of the components of the total energy of the system; times  correspond to the labeled density profile snapshots. All quantities are in dimensionless code units.}
   \label{fig:combined_1}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=0.9\textwidth,trim=0 0 2cm 2cm,clip]{egy_m=22.eps}
-  \caption{Evolution of the energy for a binary soliton system with each soliton in an elliptical orbit around the common centre of mass.}
+  \caption{Evolution of the components of the total energy of a binary soliton system with each soliton in an elliptical orbit around the common centre of mass.}
   \label{fig:binary}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=0.9\textwidth,trim=0 0.5cm 0 0,clip]{Total_Energy_Change.eps}
-  \caption{Demonstration of improving energy conservation with simulation resolution for a binary system of solitons orbiting their common centre of mass. $\Delta E_{total}$ is the difference between the current integrated energy at a given timestep and the initial integrated energy for the simulation. The ratio of this difference to the initial integrated energy is plotted on the y axis for different resolutions.}
+  \caption{Energy conservation as a function  of  simulation resolution for a binary solitons orbiting their common centre of mass. $\Delta E_{total}$ is the difference between the current total energy and the initial total energy for the configuration. The ratio of this difference to the initial integrated energy is plotted on the y axis for each resolution.}
   \label{fig:energy_change}
 \end{figure}
 
 \begin{figure}
   \includegraphics[width=0.9\textwidth,trim=0 0.5cm 0 0,clip]{Total_Energy_Change_Disruption.eps}
-  \caption{Demonstration of improving energy conservation with simulation resolution for a soliton undergoing significant tidal disruption in a Newtonian central potential. Again, $\Delta E_{total}$ is the difference between the current integrated energy at a given timestep and the initial integrated energy for the simulation. The ratio of this difference to the initial integrated energy is plotted on the y axis for each resolution.}
+  \caption{Energy conservation as a function of simulation resolution for a soliton undergoing significant tidal disruption in a Newtonian central potential. $\Delta E_{total}$ is the difference between the current total energy and the initial total energy for the configuration. The ratio of this difference to the initial integrated energy is plotted on the y axis for each resolution.}
   \label{fig:energy_change_2}
 \end{figure}
 
@@ -396,13 +397,12 @@ We now examine the  convergence of the $\psi$ field configuration as a function 
 
 \begin{figure}
   \includegraphics[width=1.\textwidth,trim=0 0 0 0,clip]{first_and_last}
-  \caption{The configuration used to test the sensitivity of solutions to the spatial and temporal resolution. Two solitons of mass $m=20$ are initialised at radial distances $r=2$ from a central mass with $M=1000$ moving in opposite directions with initial speeds $\vert v\vert=\sqrt{M/r}$, corresponding to clockwise orbits around the central mass. The  box size is 10, while the total duration is 0.25 (all quantities in code units. Time runs from left to right. \re{you could actually zoom in, to only include the active region.}\ek{I'm just concerned about misrepesenting the size of the simulation grid - I wanted to accurately represent the buffer zone, because insufficient buffer will affect the dynamics, and people trying to reproduce these results might get confused. In any case, the visual details of the density distribution aren't important here, the purpose of the figure is just to give an idea of the setup} }
-  \label{fig:disruption}
+  \caption{The configuration used to test the sensitivity of solutions to the spatial and temporal resolution. Two solitons of mass $m=20$ are initialised at radial distances $r=2$ from a central mass with $M=1000$ moving in opposite directions with initial speeds $\vert v\vert=\sqrt{M/r}$, corresponding to clockwise orbits around the central mass. The  box size is 10, while the total duration is 0.25 (all quantities in code units). Time runs from left to right. }  \label{fig:disruption}
 \end{figure}
 
-To examine the sensitivity of the  $\psi$ field configuration to the spatial resolution, we first run at $256^3$ with the default timestep. We then re-run  at resolutions  from $64^3$ to $320^3$ with the timestep fixed to the  $256^3$ value and downsample the final outputs to $64^3$. We  sort the resulting values by  the density at the corresponding spatial location, and plot differences in the phase and the magnitude of $\psi$ relative to the values of the $320^3$ run as shown in Figure \ref{fig:spatial} (bottom). \re{maybe this could be one combined figure with both plots.}\ek{Done.} The convergence is poor at $64^3$, but improves with resolution, to the point that there is little difference between the  $256^3$ and $320^3$ cases.
+To examine the sensitivity of the  $\psi$ field configuration to the spatial resolution, we first run at $256^3$ with the default timestep. We then re-run  at resolutions  from $64^3$ to $320^3$ with the timestep fixed to the  $256^3$ value and downsample the final outputs to $64^3$. We  sort the resulting values by  the density at the corresponding spatial location, and plot differences in the phase and the magnitude of $\psi$ relative to the values of the $320^3$ run as shown in Figure \ref{fig:spatial} (bottom).  The convergence is poor at $64^3$, but improves with resolution, to the point that there is little difference between the  $256^3$ and $320^3$ cases.
 
-To examine the sensitivity of the the  $\psi$ field configuration to the timestep, we take the same default simulation at $256^3$, and then compare this to runs with timesteps 0.1, 10, and 50 times the default and down-sample the final output arrays to $64^3$. We sort sort the array values in order of the $\psi$ field magnitude in the run with the smallest timestep and in Figure \ref{fig:temporal} \re{maybe also combined into one full page figure?}\ek{Done.} we show the difference in the phase and magnitude of $\psi$ as a function of the timestep.  The difference between the results with the default timestep and a value 10 times smaller are negligible; and there is reasonable agreement between the default case and those with the timestep boosted by a factor of 10. However, when the timestep is increased by a factor of $50$ the accuracy of both the phase and magnitude data are significantly reduced.
+To examine the sensitivity of the the  $\psi$ field configuration to the timestep, we take the same default simulation at $256^3$, and then compare this to runs with timesteps 0.1, 10, and 50 times the default and down-sample the final output arrays to $64^3$. We sort sort the array values in order of the $\psi$ field magnitude in the run with the smallest timestep and in Figure \ref{fig:temporal}  we show the difference in the phase and magnitude of $\psi$ as a function of the timestep.  The difference between the results with the default timestep and a value 10 times smaller are negligible; and there is reasonable agreement between the default case and those with the timestep boosted by a factor of 10. However, when the timestep is increased by a factor of $50$ the accuracy of both the phase and magnitude data are significantly reduced.
 
 \begin{figure}
   \includegraphics[width=1.\textwidth,trim=0 1cm 0 2cm,clip]{combined2}
@@ -410,14 +410,14 @@ To examine the sensitivity of the the  $\psi$ field configuration to the timeste
   \label{fig:spatial}
 \end{figure}
 
-\begin{figure}
+
+\begin{figure} 
   \includegraphics[width=1.\textwidth,trim=0 1cm 0 2cm,clip]{combined}
-  \caption{Top: Deviation of the phase of $\psi$ from the results of the simulation in which the timestep is set to 0.1 times the default. We see excellent convergence for the default timestep, and reasonable convergence for $<10$ times the default, with accuracy improving at high density regions. Bottom: Deviation of the magnitude of $\psi$ as compared to the simulation run with 0.1 times the default timestep. The convergence of the results for the default timestep with the results from the smaller timestep run demonstrate the suitability of the chosen default. We see relatively good convergence, particularly in high density regions, for a $<10$-fold increase above the default timestep.}
+  \caption{Top: Phase deviation of $\psi$, relative to solution with timestep 0.1 times default, sorted by the density. There is excellent agreement with the default timestep, and reasonable convergence at steps up to $10$ times the default, with better accuracy in high density regions. Bottom: Difference in magnitude of $\psi$, relative to the  solution with timestep 0.1 times default. Again we see good convergence with the default timestep, and tolerable agreement in high density regions when the step is a factor of $10$ or less than default. \re{Do we want to the put the ``key'' at the bottom not the middle; also I think the $x$-axis label could be clearer, or dropped.}}
   \label{fig:temporal}
 \end{figure}
 
-\ek{added new content from here to the end of the section}
-To supplement our analysis of the dependence of the field configuration on spatial and temporal resolutions, we include Figures \ref{fig:comparison} and \ref{fig:comparison2}. These figures represent the density profiles down the axis of symmetry of the initial configuration (vertical axis in Figure \ref{fig:disruption}), however rather than the profiles at $t=0$, these are the profiles after approximately half a revolution around the central potential at t=0.28 code units. At this point, the two initial solitons have become distorted due to tidal forces, but have yet to become completely disrupted. Figure \ref{fig:comparison} demonstrates the effect of increasing the timestep from 0.1 times the default value to a maximum of 50 times the default value. We see that the profiles for the default timestep and 0.1 times the default timestep are virtually indistinguishable, with 10 times the default timestep performing resonably well, with small deviations at high densities. Meanwhile, at 50 times the default timestep the results are significantly distorted. Figure \ref{fig:comparison2} demonstrates the effect of decreasing the spatial resolution from $320^3$ to $64^3$. As expected, the lowest resolution performs poorly, whereas we see high convergence of the density profile at resolutions above $192^3$.
+Figures \ref{fig:comparison} and \ref{fig:comparison2} show profiles of the density through the simulation volume, as a function of spatial resolution and timestep.  The figures represent the density profiles down the axis of symmetry of the initial configuration (vertical axis in Figure \ref{fig:disruption}) after approximately half a revolution around the central potential, or t=0.28 code units -- slightly after the final frame in Figure \ref{fig:disruption} - when the solitons have become distorted due to tidal forces, but are not yet completely disrupted. Figure \ref{fig:comparison} shows results obtained when the timestep is varied from 0.1 to 50 times the default value. The results with the default and the shorter timestep are virtually indistinguishable, and results are still reasonably accurate at 10 times the default timestep, with small deviations at high densities. However, the results are significantly distorted at 50 times the default timestep. Figure \ref{fig:comparison2} shows results at resolutions from $64^3$ to $320^3$. The lowest resolution performs poorly, but there is good convergence  at resolutions of $192^3$ and above. \re{minor edits; we could do the two figures as a single image}
 
 \begin{figure}
   \includegraphics[width=1.\textwidth,trim=0 0.8cm 0 1.2cm,clip]{comparison}
