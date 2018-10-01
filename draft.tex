@@ -10,6 +10,7 @@
 \usepackage{xspace}
 \usepackage{color}
 \usepackage{url}
+\usepackage{afterpage}
 \newcommand{\re}[1]{\textcolor{blue}{[{\bf RE}: #1]}}
 \newcommand{\ek}[1]{\textcolor{red}{[{\bf EK}: #1]}}
 
@@ -115,9 +116,9 @@ where $G$ is Newton's gravitational constant. The coupled equations \ref{eq:schr
 \begin{equation}\label{eq:poisson_periodic}
     \nabla^2\Phi=4\pi G m \big(\vert\psi\vert^2-\langle\vert\psi\vert^2\rangle\big),
 \end{equation}
-where we subtract the average density from the right hand side of the Poisson equation. The form of Equation \ref{eq:poisson_periodic} is a consequence of Gauss' law and the fact that the surface integral of the gradient of the field is identically zero when periodic boundary conditions are imposed. 
+where we subtract the average density from the right hand side of the Poisson equation. The form of Equation \ref{eq:poisson_periodic} is a consequence of Gauss' law and the fact that the surface integral of the gradient of the field around the perimeter of the simulation grid is identically zero when periodic boundary conditions are imposed \cite{Dabo:2008}. 
 
-\ek{I've given slightly more info here, think this is sufficient to understand the form of 2.8} \re{I think this is mostly there, but we should say which surface integral and may cite some of the literature here}
+\re{I think this is mostly there, but we should say which surface integral and may cite some of the literature here}\ek{How's this? It seems to be difficult to find many references which explain the subtraction of the average in detail, a lot of people just seem to use it without explanation.}
 
 \subsection{Field Rescalings}
 
@@ -260,8 +261,7 @@ and to treat $\vec{v}$ as a fluid velocity.  From this perspective, if the phase
 \begin{equation}\label{eq:timestep}
     \Delta t = \frac{(\Delta x)^2}{\pi}.
 \end{equation}
-\re{Tweaked a little; changed phase change to phase difference; the latter sounds more explicitly spatial}
-This is a choice, rather than a strict constraint on $\Delta t$. However, if the ``fluid'' approaches velocities where the phase appears to switch direction, the configuration is approaching the point where the simulation grid is too coarse to fully resolve the dynamics. Hence, a timestep much smaller than this value may offer little practical advantage. However, in some cases the breakdown may occur in regions of the simulation volume that are of little physical interest, and the user is free to choose a larger timestep  via the 'step\textunderscore factor' parameter in the Jupyter notebook.
+This is a choice, rather than a strict constraint on $\Delta t$. However, if the ``fluid'' approaches velocities where the phase appears to switch direction, the configuration is approaching the point where the simulation grid is too coarse to fully resolve the dynamics. Hence, a timestep much smaller than this value may offer little practical advantage. However, in some cases the breakdown may occur in regions of the simulation volume that are of little physical interest, and the user is free to choose a larger timestep via the 'step\textunderscore factor' parameter in the Jupyter notebook.
 
 Alternatively, Ref.~\cite{Mocz:2017wlg} fixes the timestep by ensuring that neither of the unitary operators in Equation \ref{eq:schematic-psi}  lead to a phase change of more than $\pi$ for a single grid point over one timestep. However, because the pseudo-spectral algorithm does not compare the phase of a single gridpoint at different points in time, this choice of timestep is not a requirement for stability. This method gives the following constraints: 
 \begin{equation}
@@ -404,32 +404,29 @@ To examine the sensitivity of the  $\psi$ field configuration to the spatial res
 
 To examine the sensitivity of the the  $\psi$ field configuration to the timestep, we take the same default simulation at $256^3$, and then compare this to runs with timesteps 0.1, 10, and 50 times the default and down-sample the final output arrays to $64^3$. We sort sort the array values in order of the $\psi$ field magnitude in the run with the smallest timestep and in Figure \ref{fig:temporal}  we show the difference in the phase and magnitude of $\psi$ as a function of the timestep.  The difference between the results with the default timestep and a value 10 times smaller are negligible; and there is reasonable agreement between the default case and those with the timestep boosted by a factor of 10. However, when the timestep is increased by a factor of $50$ the accuracy of both the phase and magnitude data are significantly reduced.
 
+Figure \ref{fig:comparison} shows profiles of the density through the simulation volume, as a function of spatial resolution and timestep.  Each plot represents the density profile down the axis of symmetry of the initial configuration (vertical axis in Figure \ref{fig:disruption}) after approximately half a revolution around the central potential, or t=0.28 code units -- slightly after the final frame in Figure \ref{fig:disruption} - when the solitons have become distorted due to tidal forces, but are not yet completely disrupted. We see that as the timestep is varied from 0.1 to 50 times the default value, the results with the default and the shorter timestep are virtually indistinguishable, and results are still reasonably accurate at 10 times the default timestep, with small deviations at high densities. However, the results are significantly distorted at 50 times the default timestep. We also see that as the spatial resolution is decreased from $320^3$ to $64^3$, the lowest resolution performs poorly, but there is good convergence  at resolutions of $192^3$ and above. \re{minor edits; we could do the two figures as a single image}\ek{How's this?}
+
 \begin{figure}
   \includegraphics[width=1.\textwidth,trim=0 1cm 0 2cm,clip]{combined2}
   \caption{Top: Deviation of the phase of $\psi$ compared to the highest resolution result ($320^3$). Field values are arranged in order of increasing magnitude from left to right. A slight improvement in phase convergence can be seen for higher density regions to the right. Bottom: Improving convergence of $\vert\psi\vert$ with increased spatial resolution for the simulation shown in Figure \ref{fig:disruption}}
   \label{fig:spatial}
 \end{figure}
-
+\clearpage
 
 \begin{figure} 
   \includegraphics[width=1.\textwidth,trim=0 1cm 0 2cm,clip]{combined}
-  \caption{Top: Phase deviation of $\psi$, relative to solution with timestep 0.1 times default, sorted by the density. There is excellent agreement with the default timestep, and reasonable convergence at steps up to $10$ times the default, with better accuracy in high density regions. Bottom: Difference in magnitude of $\psi$, relative to the  solution with timestep 0.1 times default. Again we see good convergence with the default timestep, and tolerable agreement in high density regions when the step is a factor of $10$ or less than default. \re{Do we want to the put the ``key'' at the bottom not the middle; also I think the $x$-axis label could be clearer, or dropped.}}
+  \caption{Top: Phase deviation of $\psi$, relative to solution with timestep 0.1 times default, sorted by the density. There is excellent agreement with the default timestep, and reasonable convergence at steps up to $10$ times the default, with better accuracy in high density regions. Bottom: Difference in magnitude of $\psi$, relative to the  solution with timestep 0.1 times default. Again we see good convergence with the default timestep, and tolerable agreement in high density regions when the step is a factor of $10$ or less than default. \re{Do we want to the put the ``key'' at the bottom not the middle; also I think the $x$-axis label could be clearer, or dropped.}}\ek{How's this?}
   \label{fig:temporal}
 \end{figure}
+\clearpage
 
-Figures \ref{fig:comparison} and \ref{fig:comparison2} show profiles of the density through the simulation volume, as a function of spatial resolution and timestep.  The figures represent the density profiles down the axis of symmetry of the initial configuration (vertical axis in Figure \ref{fig:disruption}) after approximately half a revolution around the central potential, or t=0.28 code units -- slightly after the final frame in Figure \ref{fig:disruption} - when the solitons have become distorted due to tidal forces, but are not yet completely disrupted. Figure \ref{fig:comparison} shows results obtained when the timestep is varied from 0.1 to 50 times the default value. The results with the default and the shorter timestep are virtually indistinguishable, and results are still reasonably accurate at 10 times the default timestep, with small deviations at high densities. However, the results are significantly distorted at 50 times the default timestep. Figure \ref{fig:comparison2} shows results at resolutions from $64^3$ to $320^3$. The lowest resolution performs poorly, but there is good convergence  at resolutions of $192^3$ and above. \re{minor edits; we could do the two figures as a single image}
 
 \begin{figure}
-  \includegraphics[width=1.\textwidth,trim=0 0.8cm 0 1.2cm,clip]{comparison}
-  \caption{Effect of increasing the timestep on the density profile at half a revolution.}
+  \includegraphics[width=1.\textwidth,trim=0 1.2cm 0 2.0cm,clip]{comparison}
+  \caption{Top: Effect of decreasing the spatial resolution on the density profile at half a revolution. Bottom: Effect of increasing the timestep on the density profile at half a revolution.}
   \label{fig:comparison}
 \end{figure}
-
-\begin{figure}
-  \includegraphics[width=1.\textwidth,trim=0 0.8cm 0 1.2cm,clip]{comparison2}
-  \caption{Effect of decreasing the spatial resolution on the density profile at half a revolution.}
-  \label{fig:comparison2}
-\end{figure}
+\clearpage
 
 
 \section{Discussion and Outlook}
